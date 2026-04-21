@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+if [[ "$(uname -s)" == "Linux" ]]; then
+    cap_eff_hex="$(awk '/^CapEff:/ {print $2}' /proc/$$/status 2>/dev/null || true)"
+    if [[ "${cap_eff_hex}" == "0000000000000000" ]]; then
+        echo "WARNING: Bluetooth recovery needs CAP_NET_ADMIN/CAP_NET_RAW, but this shell has no effective capabilities."
+        echo "You may see bluetooth_auto_recovery warnings like 'Operation not permitted'."
+        echo "For host Linux, run once: sudo ${PWD}/scripts/enable-bt-caps"
+        echo "If using a devcontainer, rebuild it with NET_ADMIN/NET_RAW and D-Bus mount enabled."
+    fi
+
+    if command -v systemctl >/dev/null 2>&1; then
+        bt_exec_start="$(systemctl show bluetooth -p ExecStart --value 2>/dev/null || true)"
+        if [[ -n "${bt_exec_start}" && "${bt_exec_start}" != *"--experimental"* ]]; then
+            echo "WARNING: bluetoothd is not running with --experimental."
+            echo "If scanner restart falls back to passive mode, startup may fail with BlueZ passive-scan errors."
+            echo "Enable it with:"
+            echo "  sudo systemctl edit bluetooth"
+            echo "Then add:"
+            echo "  [Service]"
+            echo "  ExecStart="
+            echo "  ExecStart=/usr/libexec/bluetooth/bluetoothd --experimental"
+            echo "Apply with: sudo systemctl daemon-reload && sudo systemctl restart bluetooth"
+        fi
+    fi
+fi
+
+# Create config dir if not present
+if [[ ! -d "${PWD}/config" ]]; then
+    mkdir -p "${PWD}/config"
+    uv run --group dev hass --config "${PWD}/config" --script ensure_config
+fi
+
+# Set the path to custom_components
+## This let's us have the structure we want <root>/custom_components/kbeacon
+## while at the same time have Home Assistant configuration inside <root>/config
+## without resulting to symlinks.
+export PYTHONPATH="${PYTHONPATH}:${PWD}/custom_components"
+
+# Start Home Assistant
+uv run --group dev hass --config "${PWD}/config" --debug

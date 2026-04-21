@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+# Install uv package manager if not already installed
+if ! command -v uv &> /dev/null; then
+    echo "Installing uv..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    export PATH="$HOME/.local/bin:$PATH"
+fi
+
+# Sync dependencies including dev dependencies
+uv sync --group dev
+
+# Install Git hooks for local quality checks
+uv run --group dev pre-commit install
+
+# Ensure Home Assistant config can find local custom integrations
+mkdir -p "${PWD}/config"
+if [[ ! -e "${PWD}/config/custom_components" ]]; then
+    ln -s ../custom_components "${PWD}/config/custom_components"
+fi
+

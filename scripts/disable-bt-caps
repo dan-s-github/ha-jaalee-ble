@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+if [[ "$(uname -s)" != "Linux" ]]; then
+    echo "This script is only supported on Linux."
+    exit 1
+fi
+
+if ! command -v setcap >/dev/null 2>&1; then
+    echo "setcap not found. Install libcap tools first (for example: libcap2-bin)."
+    exit 1
+fi
+
+python_target="$(readlink -f "${PWD}/.venv/bin/python3" 2>/dev/null || true)"
+if [[ -z "${python_target}" || ! -x "${python_target}" ]]; then
+    echo "Could not locate executable Python at .venv/bin/python3."
+    exit 1
+fi
+
+if [[ "${EUID}" -ne 0 ]]; then
+    echo "This operation needs root privileges."
+    echo "Run: sudo ${PWD}/scripts/disable-bt-caps"
+    exit 1
+fi
+
+setcap -r "${python_target}"
+
+echo "Removed capabilities from ${python_target}"
+if command -v getcap >/dev/null 2>&1; then
+    getcap "${python_target}" || true
+else
+    echo "Note: getcap not found; skipping capability verification output."
+fi
