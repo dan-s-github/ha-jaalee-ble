@@ -40,7 +40,7 @@ if TYPE_CHECKING:
 
 UID_TX_POWER_KEY = "uid_tx_power"
 
-KBEACON_LIGHT_DEVICE_CLASS = getattr(
+JAALEE_LIGHT_DEVICE_CLASS = getattr(
     JaaleeSensorDeviceClass,
     "LIGHT",
     getattr(JaaleeSensorDeviceClass, "ILLUMINANCE", None),
@@ -129,10 +129,10 @@ CUSTOM_SENSOR_DESCRIPTIONS = {
     ),
 }
 
-if KBEACON_LIGHT_DEVICE_CLASS is not None:
-    SENSOR_DESCRIPTIONS[(KBEACON_LIGHT_DEVICE_CLASS, Units.LIGHT_LUX)] = (
+if JAALEE_LIGHT_DEVICE_CLASS is not None:
+    SENSOR_DESCRIPTIONS[(JAALEE_LIGHT_DEVICE_CLASS, Units.LIGHT_LUX)] = (
         SensorEntityDescription(
-            key=f"{KBEACON_LIGHT_DEVICE_CLASS}_{Units.LIGHT_LUX}",
+            key=f"{JAALEE_LIGHT_DEVICE_CLASS}_{Units.LIGHT_LUX}",
             device_class=SensorDeviceClass.ILLUMINANCE,
             native_unit_of_measurement=LIGHT_LUX,
             state_class=SensorStateClass.MEASUREMENT,

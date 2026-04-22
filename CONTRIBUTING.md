@@ -54,9 +54,8 @@ For the Jaalee BLE integration repository, see [ha-jaalee-ble](https://github.co
 
 It comes with development environment in a container, easy to launch
 if you use Visual Studio Code. With this container you will have a stand alone
-Home Assistant instance running and already configured with the included
-[`configuration.yaml`](./config/configuration.yaml)
-file.
+Home Assistant instance running and configured for development within the
+container environment.
 
 **Note:** The devcontainer will not allow mapping the host Bluetooth adapter on macOS, but it might work on a Linux host. For full Bluetooth testing, you may need to run Home Assistant directly on the host machine or use a physical device.
 
