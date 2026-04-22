@@ -1,10 +1,10 @@
 {
-  "domain": "kbeacon",
-  "name": "KBeacon BLE",
+  "domain": "jaalee",
+  "name": "Jaalee BLE",
   "bluetooth": [
     {
       "connectable": true,
-      "service_data_uuid": "00002080-0000-1000-8000-00805f9b34fb"
+      "service_data_uuid": "0000f525-0000-1000-8000-00805f9b34fb"
     }
   ],
   "codeowners": [
@@ -14,11 +14,11 @@
   "dependencies": [
     "bluetooth"
   ],
-  "documentation": "https://github.com/dan-s-github/ha-kbeacon-ble",
+  "documentation": "https://github.com/dan-s-github/ha-jaalee-ble",
   "iot_class": "local_push",
-  "issue_tracker": "https://github.com/dan-s-github/ha-kbeacon-ble/issues",
+  "issue_tracker": "https://github.com/dan-s-github/ha-jaalee-ble/issues",
   "requirements": [
-    "kbeacon-ble"
+    "jaalee-ble"
   ],
   "version": "0.1.0"
 }
