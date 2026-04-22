@@ -3,7 +3,7 @@
     "abort": {
       "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
       "already_in_progress": "[%key:common::config_flow::abort::already_in_progress%]",
-      "no_devices_found": "No supported KBeacon BLE devices were found nearby.",
+      "no_devices_found": "No supported Jaalee BLE devices were found nearby.",
       "not_supported": "Device not supported"
     },
     "flow_title": "{name}",
@@ -15,7 +15,7 @@
         "data": {
           "address": "[%key:common::config_flow::data::device%]"
         },
-        "description": "Select a discovered KBeacon BLE device to set up."
+        "description": "Select a discovered Jaalee BLE device to set up."
       }
     }
   }

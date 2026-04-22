@@ -8,7 +8,7 @@
 
 Home Assistant integration for Jaalee Bluetooth Low Energy (BLE) devices.
 
-This integration automatically discovers and monitors Jaalee BLE sensors through passive Bluetooth scanning. It supports temperature, humidity, battery percentage, and signal strength (UID Tx power) diagnostics. Additional sensor types (CO2, voltage, light, pressure, UV) are prepared for when supported by Jaalee devices.
+This integration automatically discovers and monitors Jaalee BLE sensors through passive Bluetooth scanning. It supports temperature, humidity, battery percentage, and signal strength (UID Tx power) diagnostics. Additional sensor types (CO2, voltage, light, pressure) are prepared for when supported by Jaalee devices. UV is planned for future parser support.
 
 ## Features
 
@@ -19,7 +19,7 @@ This integration automatically discovers and monitors Jaalee BLE sensors through
   - Humidity (%)
   - Battery (%)
   - UID Tx Power (dBm, diagnostic)
-- **No Configuration Required**: Devices are automatically discovered and added through the UI
+- **No YAML Configuration Required**: Devices are discovered through Bluetooth and added with the UI flow
 
 ## Requirements
 
@@ -54,7 +54,6 @@ The integration will automatically create sensor entities for:
 - Temperature
 - Humidity
 - Battery
-- UID Tx Power (disabled by default, can be enabled in entity settings)
 
 ## Development (Devcontainer + Bluetooth)
 
@@ -72,7 +71,7 @@ The integration will automatically create sensor entities for:
 
 ## Supported Devices
 
-This integration supports Jaalee BLE devices that broadcast iBeacon telemetry data with manufacturer ID 33 (0x21).
+This integration supports Jaalee BLE devices that broadcast iBeacon telemetry data with service data UUID `0000f525-0000-1000-8000-00805f9b34fb`.
 
 ## Troubleshooting
 
