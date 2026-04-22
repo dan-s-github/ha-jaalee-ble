@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+if [[ "$(uname -s)" == "Linux" ]]; then
+    python_with_caps="${PWD}/.venv/bin/python3"
+    if [[ -x "${python_with_caps}" ]] && command -v getcap >/dev/null 2>&1; then
+        python_caps="$(getcap "${python_with_caps}" 2>/dev/null || true)"
+        if [[ "${python_caps}" != *cap_net_admin* || "${python_caps}" != *cap_net_raw* ]]; then
+            echo "WARNING: Bluetooth recovery needs CAP_NET_ADMIN/CAP_NET_RAW, but ${python_with_caps} does not have both file capabilities."
+            echo "You may see bluetooth_auto_recovery warnings like 'Operation not permitted'."
+            echo "For host Linux, run once: sudo ${PWD}/scripts/enable-bt-caps"
+            echo "If using a devcontainer, rebuild it with NET_ADMIN/NET_RAW and D-Bus mount enabled."
+        fi
+    fi
+
+    if command -v systemctl >/dev/null 2>&1; then
+        bt_exec_start="$(systemctl show bluetooth -p ExecStart --value 2>/dev/null || true)"
+        if [[ -n "${bt_exec_start}" && "${bt_exec_start}" != *"--experimental"* ]]; then
+            echo "WARNING: bluetoothd is not running with --experimental."
+            echo "If scanner restart falls back to passive mode, startup may fail with BlueZ passive-scan errors."
+            echo "Enable it with:"
+            echo "  sudo systemctl edit bluetooth"
+            echo "Then add:"
+            echo "  [Service]"
+            echo "  ExecStart="
+            echo "  ExecStart=/usr/libexec/bluetooth/bluetoothd --experimental"
+            echo "Apply with: sudo systemctl daemon-reload && sudo systemctl restart bluetooth"
+        fi
+    fi
+fi
+
+# Create config dir if not present
+if [[ ! -d "${PWD}/config" ]]; then
+    mkdir -p "${PWD}/config"
+    uv run --group dev hass --config "${PWD}/config" --script ensure_config
+fi
+
+# Set the path to custom_components
+## This lets us have the structure we want <root>/custom_components/jaalee
+## while at the same time have Home Assistant configuration inside <root>/config.
+## This script exposes custom_components via PYTHONPATH; other setup workflows
+## may instead create config/custom_components as a symlink.
+export PYTHONPATH="${PYTHONPATH:+${PYTHONPATH}:}${PWD}/custom_components"
+
+# Start Home Assistant
+uv run --group dev hass --config "${PWD}/config" --debug

@@ -1,0 +1,51 @@
+{
+    "name": "dan-s-github/ha-jaalee-ble",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "runArgs": [
+        // "--privileged",
+        "--cap-add=NET_ADMIN",
+        "--cap-add=NET_RAW",
+        "--network=host"
+    ],
+    // "mounts": [
+    //     "source=/run/dbus,target=/run/dbus,type=bind,readonly"
+    // ],
+    "postCreateCommand": "scripts/setup",
+    "forwardPorts": [
+        8123
+    ],
+    "portsAttributes": {
+        "8123": {
+            "label": "Home Assistant",
+            "onAutoForward": "notify"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "charliermarsh.ruff",
+                "github.vscode-pull-request-github",
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ryanluker.vscode-coverage-gutters"
+            ],
+            "settings": {
+                "files.eol": "\n",
+                "editor.tabSize": 4,
+                "editor.formatOnPaste": true,
+                "editor.formatOnSave": true,
+                "editor.formatOnType": false,
+                "files.trimTrailingWhitespace": true,
+                "python.analysis.typeCheckingMode": "basic",
+                "python.analysis.autoImportCompletions": true,
+                "python.defaultInterpreterPath": "/usr/local/bin/python",
+                "[python]": {
+                    "editor.defaultFormatter": "charliermarsh.ruff"
+                }
+            }
+        }
+    },
+    "remoteUser": "vscode"
+}
