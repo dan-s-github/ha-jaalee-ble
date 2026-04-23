@@ -1,39 +1,39 @@
-name: Lint
+name: Tests
 
 on:
   push:
-    branches:
-      - "main"
   pull_request:
-    branches:
-      - "main"
 
 permissions:
   contents: read
 
 jobs:
-  ruff:
-    name: "Ruff"
+  tests:
+    name: "Tests"
     runs-on: "ubuntu-latest"
+    strategy:
+      matrix:
+        python-version:
+          - "3.14"
     steps:
       - name: Checkout the repository
         uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v6.0.2
 
-      - name: Set up Python
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@c8813ba1bc76ebf779b911ad8ffccbf2e449cb48 # v6.2.0
         with:
-          python-version: "3.13.2"
+          python-version: "${{ matrix.python-version }}"
           cache: "pip"
           cache-dependency-path: "uv.lock"
 
       - name: Install uv
-        run: python3 -m pip install uv==0.8.22
+        run: python3 -m pip install uv==0.10.6
 
       - name: Sync dependencies
         run: uv sync --group dev --frozen
 
-      - name: Lint
-        run: uv run --group dev ruff check .
+      - name: Run tests
+        run: uv run --group dev pytest -v
 
-      - name: Format
-        run: uv run --group dev ruff format . --check
+      - name: Run type checks
+        run: uv run --group dev mypy custom_components
