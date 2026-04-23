@@ -166,7 +166,7 @@ def sensor_update_to_bluetooth_data_update(
                 CUSTOM_SENSOR_DESCRIPTIONS[device_key.key]
                 if device_key.key in CUSTOM_SENSOR_DESCRIPTIONS
                 else SENSOR_DESCRIPTIONS[
-                    (description.device_class, description.native_unit_of_measurement)
+                    (description.device_class, description.native_unit_of_measurement)  # type: ignore[index]
                 ]
             )
             for device_key, description in sensor_update.entity_descriptions.items()
