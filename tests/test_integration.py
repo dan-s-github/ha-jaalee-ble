@@ -11,7 +11,7 @@ from custom_components.jaalee.const import DOMAIN
 
 
 @pytest.fixture
-def mock_hass() -> None:
+def mock_hass() -> MagicMock:
     """Create a mock HomeAssistant instance."""
     hass = MagicMock(spec=HomeAssistant)
     hass.data = {DOMAIN: {}}
@@ -19,7 +19,7 @@ def mock_hass() -> None:
 
 
 @pytest.fixture
-def mock_config_entry() -> None:
+def mock_config_entry() -> MagicMock:
     """Create a mock config entry."""
     entry = MagicMock(spec=ConfigEntry)
     entry.entry_id = "test_entry_123"

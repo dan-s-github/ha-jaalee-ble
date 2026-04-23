@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from homeassistant.components.bluetooth.passive_update_processor import (
     PassiveBluetoothDataProcessor,
@@ -166,7 +166,13 @@ def sensor_update_to_bluetooth_data_update(
                 CUSTOM_SENSOR_DESCRIPTIONS[device_key.key]
                 if device_key.key in CUSTOM_SENSOR_DESCRIPTIONS
                 else SENSOR_DESCRIPTIONS[
-                    (description.device_class, description.native_unit_of_measurement)  # type: ignore[index]
+                    cast(
+                        "tuple[JaaleeSensorDeviceClass, Units]",
+                        (
+                            description.device_class,
+                            description.native_unit_of_measurement,
+                        ),
+                    )
                 ]
             )
             for device_key, description in sensor_update.entity_descriptions.items()

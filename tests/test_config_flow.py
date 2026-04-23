@@ -10,13 +10,13 @@ from custom_components.jaalee.config_flow import JaaleeConfigFlow
 
 
 @pytest.fixture
-def config_flow() -> None:
+def config_flow() -> JaaleeConfigFlow:
     """Create a config flow instance."""
     return JaaleeConfigFlow()
 
 
 @pytest.fixture
-def mock_discovery_info() -> None:
+def mock_discovery_info() -> MagicMock:
     """Create mock discovery info."""
     info = MagicMock(spec=BluetoothServiceInfoBleak)
     info.address = "AA:BB:CC:DD:EE:FF"
@@ -25,7 +25,7 @@ def mock_discovery_info() -> None:
 
 
 @pytest.fixture
-def mock_device_data() -> None:
+def mock_device_data() -> MagicMock:
     """Create mock device data."""
     device = MagicMock()
     device.title = "Test Jaalee Device"
