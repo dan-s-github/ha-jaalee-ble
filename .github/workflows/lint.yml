@@ -22,12 +22,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@c8813ba1bc76ebf779b911ad8ffccbf2e449cb48 # v6.2.0
         with:
-          python-version: "3.13.2"
+          python-version: "3.14"
           cache: "pip"
           cache-dependency-path: "uv.lock"
 
       - name: Install uv
-        run: python3 -m pip install uv==0.8.22
+        run: python3 -m pip install uv==0.10.6
 
       - name: Sync dependencies
         run: uv sync --group dev --frozen

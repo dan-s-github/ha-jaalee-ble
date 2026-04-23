@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/python:3.13
+FROM mcr.microsoft.com/devcontainers/python:3.14
 
 # Remove problematic yarn repository that has signing issues
 RUN rm -f /etc/apt/sources.list.d/yarn.list
@@ -11,4 +11,4 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install uv - fast Python package installer
-COPY --from=ghcr.io/astral-sh/uv:0.5.22 /uv /usr/local/bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.10.6 /uv /usr/local/bin/uv
