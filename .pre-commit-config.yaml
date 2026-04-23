@@ -11,3 +11,17 @@ repos:
         entry: uv run --group dev ruff check --fix
         language: system
         types_or: [python, pyi]
+      - id: pytest
+        name: Pytest
+        entry: uv run --group dev pytest
+        language: system
+        types: [python]
+        stages: [pre-commit]
+        pass_filenames: false
+      - id: mypy
+        name: Mypy
+        entry: uv run --group dev mypy custom_components
+        language: system
+        types: [python]
+        stages: [pre-commit]
+        pass_filenames: false
