@@ -18,7 +18,7 @@ from jaalee_ble import Units
 from custom_components.jaalee.sensor import (
     CUSTOM_SENSOR_DESCRIPTIONS,
     SENSOR_DESCRIPTIONS,
-    UID_TX_POWER_KEY,
+    TX_POWER_KEY,
     sensor_update_to_bluetooth_data_update,
 )
 
@@ -97,9 +97,9 @@ def test_pressure_sensor_description() -> None:
 
 def test_custom_sensor_descriptions() -> None:
     """Test custom sensor descriptions."""
-    assert UID_TX_POWER_KEY in CUSTOM_SENSOR_DESCRIPTIONS
+    assert TX_POWER_KEY in CUSTOM_SENSOR_DESCRIPTIONS
 
-    description = CUSTOM_SENSOR_DESCRIPTIONS[UID_TX_POWER_KEY]
+    description = CUSTOM_SENSOR_DESCRIPTIONS[TX_POWER_KEY]
     assert description.device_class == SensorDeviceClass.SIGNAL_STRENGTH
     assert description.native_unit_of_measurement == SIGNAL_STRENGTH_DECIBELS_MILLIWATT
     assert description.entity_category == EntityCategory.DIAGNOSTIC
@@ -176,6 +176,6 @@ def test_sensor_update_to_bluetooth_data_update_filters_unsupported() -> None:
     assert result.entity_descriptions == {}
 
 
-def test_uid_tx_power_key_value() -> None:
-    """Test that UID_TX_POWER_KEY has the expected value."""
-    assert UID_TX_POWER_KEY == "uid_tx_power"
+def test_tx_power_key_value() -> None:
+    """Test that TX_POWER_KEY has the expected value."""
+    assert TX_POWER_KEY == "tx_power"
