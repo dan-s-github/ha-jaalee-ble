@@ -20,11 +20,20 @@ jobs:
   release:
     name: Commitizen release
     runs-on: ubuntu-latest
+    environment: release
     steps:
+      - name: Generate GitHub App token
+        id: app_token
+        uses: actions/create-github-app-token@df432ceedc7162793a195dd1713ff69aefc7379e # v2.0.6
+        with:
+          app-id: ${{ secrets.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_SECRET_KEY }}
+
       - name: Checkout the repository
         uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v6.0.2
         with:
           fetch-depth: 0
+          token: ${{ steps.app_token.outputs.token }}
 
       - name: Set up Python
         uses: actions/setup-python@c8813ba1bc76ebf779b911ad8ffccbf2e449cb48 # v6.2.0
@@ -56,5 +65,5 @@ jobs:
 
       - name: Create GitHub release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app_token.outputs.token }}
         run: gh release create "${{ steps.release_tag.outputs.tag }}" --generate-notes
