@@ -38,7 +38,7 @@ if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-UID_TX_POWER_KEY = "uid_tx_power"
+TX_POWER_KEY = "tx_power"
 
 JAALEE_LIGHT_DEVICE_CLASS = getattr(
     JaaleeSensorDeviceClass,
@@ -48,8 +48,8 @@ JAALEE_LIGHT_DEVICE_CLASS = getattr(
 
 # Sensor type configurations for Home Assistant integration.
 #
-# CURRENT PARSER CAPABILITIES (jaalee-ble v1.0.0rc1):
-#   Battery percentage, Humidity percentage, Temperature (Celsius)
+# CURRENT PARSER CAPABILITIES (jaalee-ble v1.0.0):
+#   Battery percentage, Humidity percentage, Temperature (Celsius), Tx Power (dBm)
 #
 # FORWARD-LOOKING CONFIGURATIONS (Ready when parser adds support):
 #   CO2 (ppm): Awaiting parser support for CO2 extraction
@@ -120,8 +120,8 @@ SENSOR_DESCRIPTIONS = {
 }
 
 CUSTOM_SENSOR_DESCRIPTIONS = {
-    UID_TX_POWER_KEY: SensorEntityDescription(
-        key=UID_TX_POWER_KEY,
+    TX_POWER_KEY: SensorEntityDescription(
+        key=TX_POWER_KEY,
         device_class=SensorDeviceClass.SIGNAL_STRENGTH,
         native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
         entity_category=EntityCategory.DIAGNOSTIC,

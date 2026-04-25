@@ -20,6 +20,31 @@ Pull requests are the best way to propose changes to the codebase.
 5. Test your contribution.
 6. Issue that pull request!
 
+### Commit message linting
+
+This repository enforces Conventional Commits via pre-commit at commit-message time.
+
+Use commit messages in this format:
+
+- `type: short summary`
+- `type(scope): short summary`
+
+Examples:
+
+- `feat: add support for connectable advertisements`
+- `fix(sensor): ignore invalid temperature payload`
+- `chore: bump jaalee-ble to 1.0.0`
+
+### Releases
+
+Releases are managed with Commitizen and a dedicated GitHub Actions workflow.
+
+- Version source of truth: `project.version` in `pyproject.toml`
+- Synced file: `custom_components/jaalee/manifest.json` `version` field
+- Tag format: `vX.Y.Z`
+
+To cut a release, run the `Release` workflow from Actions and choose the increment (`PATCH`, `MINOR`, or `MAJOR`).
+
 ## Any contributions you make will be under the MIT Software License
 
 In short, when you submit code changes, your submissions are understood to be under the same [MIT License](http://choosealicense.com/licenses/mit/) that covers the project. Feel free to contact the maintainers if that's a concern.
