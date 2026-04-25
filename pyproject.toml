@@ -30,6 +30,7 @@ dependencies = [
 dev = [
     "aiousbwatcher",
     "bluetooth-adapters>=2.1.0",
+    "commitizen>=3.29.1",
     "colorlog>=6.10.1",
     "habluetooth>=5.7.0",
     "homeassistant==2026.3.0",
@@ -57,3 +58,10 @@ warn_unused_ignores = true
 warn_redundant_casts = true
 warn_unused_configs = true
 ignore_missing_imports = true
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version_provider = "pep621"
+version_files = ["custom_components/jaalee/manifest.json:version"]
+tag_format = "v$version"
+update_changelog_on_bump = true
