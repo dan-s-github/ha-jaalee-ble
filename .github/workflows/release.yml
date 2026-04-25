@@ -74,5 +74,11 @@ jobs:
 
       - name: Create GitHub release
         env:
-          GITHUB_TOKEN: ${{ steps.app_token.outputs.token }}
-        run: gh release create "${{ steps.release_tag.outputs.tag }}" --generate-notes
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ steps.release_tag.outputs.tag }}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists; skipping creation."
+          else
+            gh release create "$TAG" --verify-tag --generate-notes
+          fi
