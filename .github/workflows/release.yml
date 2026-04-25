@@ -36,6 +36,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
+          fetch-tags: true
           token: ${{ steps.app_token.outputs.token }}
 
       - name: Set up Python
@@ -80,5 +81,5 @@ jobs:
           if gh release view "$TAG" >/dev/null 2>&1; then
             echo "Release $TAG already exists; skipping creation."
           else
-            gh release create "$TAG" --verify-tag --generate-notes
+            gh release create "$TAG" --generate-notes
           fi
