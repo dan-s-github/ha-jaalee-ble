@@ -12,6 +12,9 @@ on:
           - PATCH
           - MINOR
           - MAJOR
+          - PATCH_RC
+          - MINOR_RC
+          - MAJOR_RC
 
 permissions:
   contents: write
@@ -54,7 +57,13 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Bump version and create changelog
-        run: uv run --group dev cz bump --yes --changelog --increment ${{ inputs.increment }}
+        run: |
+          INCREMENT=$(echo "${{ inputs.increment }}" | sed 's/_RC$//')
+          if [[ "${{ inputs.increment }}" == *_RC ]]; then
+            uv run --group dev cz bump --yes --changelog --increment "$INCREMENT" --pre-release rc
+          else
+            uv run --group dev cz bump --yes --changelog --increment "$INCREMENT"
+          fi
 
       - name: Push commit and tags
         run: git push --follow-tags
