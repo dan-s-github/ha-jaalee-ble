@@ -48,7 +48,7 @@ JAALEE_LIGHT_DEVICE_CLASS = getattr(
 
 # Sensor type configurations for Home Assistant integration.
 #
-# CURRENT PARSER CAPABILITIES (jaalee-ble v1.0.0rc2):
+# CURRENT PARSER CAPABILITIES (jaalee-ble v1.0.0):
 #   Battery percentage, Humidity percentage, Temperature (Celsius), Tx Power (dBm)
 #
 # FORWARD-LOOKING CONFIGURATIONS (Ready when parser adds support):
