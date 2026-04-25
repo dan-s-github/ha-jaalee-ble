@@ -27,19 +27,19 @@ jobs:
     steps:
       - name: Generate GitHub App token
         id: app_token
-        uses: actions/create-github-app-token@df432ceedc7162793a195dd1713ff69aefc7379e # v2.0.6
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         with:
-          app-id: ${{ secrets.APP_CLIENT_ID }}
-          private-key: ${{ secrets.APP_SECRET_KEY }}
+          client-id: ${{ secrets.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
       - name: Checkout the repository
-        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
           token: ${{ steps.app_token.outputs.token }}
 
       - name: Set up Python
-        uses: actions/setup-python@c8813ba1bc76ebf779b911ad8ffccbf2e449cb48 # v6.2.0
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: "3.14"
           cache: "pip"
@@ -60,7 +60,7 @@ jobs:
         run: |
           INCREMENT=$(echo "${{ inputs.increment }}" | sed 's/_RC$//')
           if [[ "${{ inputs.increment }}" == *_RC ]]; then
-            uv run --group dev cz bump --yes --changelog --increment "$INCREMENT" --pre-release rc
+            uv run --group dev cz bump --yes --changelog --increment "$INCREMENT" --prerelease rc
           else
             uv run --group dev cz bump --yes --changelog --increment "$INCREMENT"
           fi
