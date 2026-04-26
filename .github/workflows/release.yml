@@ -67,15 +67,20 @@ jobs:
           fi
 
       - name: Push commit and tags
-        run: git push --follow-tags
+        run: |
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+          git push origin --tags
 
       - name: Resolve release tag
         id: release_tag
         run: echo "tag=$(git describe --tags --abbrev=0)" >> "$GITHUB_OUTPUT"
 
+      - name: Verify release tag on origin
+        run: git ls-remote --exit-code --tags origin "refs/tags/${{ steps.release_tag.outputs.tag }}"
+
       - name: Create GitHub release
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: |
           TAG="${{ steps.release_tag.outputs.tag }}"
           if gh release view "$TAG" >/dev/null 2>&1; then
