@@ -1,190 +1,204 @@
-"""Test config flow for jaalee integration."""
+"""Test the Jaalee BLE config flow."""
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import patch
 
 import pytest
-from homeassistant.components.bluetooth import BluetoothServiceInfoBleak
-from homeassistant.const import CONF_ADDRESS
+from homeassistant import config_entries
+from homeassistant.core import HomeAssistant
+from homeassistant.data_entry_flow import FlowResultType
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.jaalee.config_flow import JaaleeConfigFlow
+from custom_components.jaalee.const import DOMAIN
 
-
-@pytest.fixture
-def config_flow() -> JaaleeConfigFlow:
-    """Create a config flow instance."""
-    return JaaleeConfigFlow()
+from . import JAALEE_SERVICE_INFO, NOT_JAALEE_SERVICE_INFO
 
 
-@pytest.fixture
-def mock_discovery_info() -> MagicMock:
-    """Create mock discovery info."""
-    info = MagicMock(spec=BluetoothServiceInfoBleak)
-    info.address = "AA:BB:CC:DD:EE:FF"
-    info.name = "Jaalee Device"
-    return info
+@pytest.fixture(autouse=True)
+def expected_lingering_timers() -> bool:
+    """Allow known bluetooth manager timer during config flow tests."""
+    return True
 
 
-@pytest.fixture
-def mock_device_data() -> MagicMock:
-    """Create mock device data."""
-    device = MagicMock()
-    device.title = "Test Jaalee Device"
-    device.get_device_name.return_value = "Test Device"
-    device.supported.return_value = True
-    return device
-
-
-def test_config_flow_version(config_flow) -> None:
-    """Test that config flow version is set correctly."""
-    assert config_flow.VERSION == 1
-
-
-def test_config_flow_initialization(config_flow) -> None:
-    """Test config flow initialization."""
-    assert config_flow._discovery_info is None  # noqa: SLF001
-    assert config_flow._discovered_device is None  # noqa: SLF001
-    assert config_flow._discovered_devices == {}  # noqa: SLF001
-
-
-@pytest.mark.asyncio
-async def test_async_step_bluetooth_supported_device(
-    config_flow: JaaleeConfigFlow,
-    mock_discovery_info: MagicMock,
-    mock_device_data: MagicMock,
-) -> None:
-    """Test bluetooth discovery step with supported device."""
-    config_flow.hass = MagicMock()
-    config_flow.async_set_unique_id = AsyncMock()
-    config_flow._abort_if_unique_id_configured = MagicMock()  # noqa: SLF001
-
-    with patch(
-        "custom_components.jaalee.config_flow.DeviceData", return_value=mock_device_data
-    ):
-        config_flow.async_step_bluetooth_confirm = AsyncMock(
-            return_value={"type": "form"}
-        )
-
-        await config_flow.async_step_bluetooth(mock_discovery_info)
-
-        # Verify unique ID was set
-        config_flow.async_set_unique_id.assert_called_once_with(
-            mock_discovery_info.address
-        )
-        # Verify abort if already configured was called
-        config_flow._abort_if_unique_id_configured.assert_called_once()  # noqa: SLF001
-        # Verify device info was stored
-        assert config_flow._discovery_info == mock_discovery_info  # noqa: SLF001
-        assert config_flow._discovered_device == mock_device_data  # noqa: SLF001
-        # Verify next step was called
-        config_flow.async_step_bluetooth_confirm.assert_called_once()
-
-
-@pytest.mark.asyncio
-async def test_async_step_bluetooth_unsupported_device(
-    config_flow: JaaleeConfigFlow, mock_discovery_info: MagicMock
-) -> None:
-    """Test bluetooth discovery step with unsupported device."""
-    config_flow.hass = MagicMock()
-    config_flow.async_set_unique_id = AsyncMock()
-    config_flow._abort_if_unique_id_configured = MagicMock()  # noqa: SLF001
-    config_flow.async_abort = MagicMock(return_value={"type": "abort"})
-
-    mock_device_data = MagicMock()
-    mock_device_data.supported.return_value = False
-
-    with patch(
-        "custom_components.jaalee.config_flow.DeviceData", return_value=mock_device_data
-    ):
-        await config_flow.async_step_bluetooth(mock_discovery_info)
-
-        config_flow.async_abort.assert_called_once_with(reason="not_supported")
-
-
-@pytest.mark.asyncio
-async def test_async_step_bluetooth_confirm_with_user_input(
-    config_flow: JaaleeConfigFlow,
-    mock_discovery_info: MagicMock,
-    mock_device_data: MagicMock,
-) -> None:
-    """Test bluetooth confirm step with user input."""
-    config_flow._discovered_device = mock_device_data  # noqa: SLF001
-    config_flow._discovery_info = mock_discovery_info  # noqa: SLF001
-    config_flow.async_create_entry = MagicMock(return_value={"type": "create_entry"})
-
-    await config_flow.async_step_bluetooth_confirm(user_input={})
-
-    config_flow.async_create_entry.assert_called_once()
-    call_args = config_flow.async_create_entry.call_args
-    assert "title" in call_args.kwargs
-
-
-@pytest.mark.asyncio
-async def test_async_step_bluetooth_confirm_show_form(
-    config_flow: JaaleeConfigFlow,
-    mock_discovery_info: MagicMock,
-    mock_device_data: MagicMock,
-) -> None:
-    """Test bluetooth confirm step shows form without user input."""
-    config_flow._discovered_device = mock_device_data  # noqa: SLF001
-    config_flow._discovery_info = mock_discovery_info  # noqa: SLF001
-    config_flow._set_confirm_only = MagicMock()  # noqa: SLF001
-    config_flow.async_show_form = MagicMock(return_value={"type": "form"})
-    config_flow.context = {}
-
-    await config_flow.async_step_bluetooth_confirm(user_input=None)
-
-    config_flow._set_confirm_only.assert_called_once()  # noqa: SLF001
-    config_flow.async_show_form.assert_called_once()
-
-
-@pytest.mark.asyncio
-async def test_async_step_bluetooth_confirm_missing_device(config_flow) -> None:
-    """Test bluetooth confirm step with missing device info."""
-    config_flow._discovered_device = None  # noqa: SLF001
-    config_flow._discovery_info = None  # noqa: SLF001
-    config_flow.async_abort = MagicMock(return_value={"type": "abort"})
-
-    await config_flow.async_step_bluetooth_confirm()
-
-    config_flow.async_abort.assert_called_once_with(reason="not_supported")
-
-
-@pytest.mark.asyncio
-async def test_async_step_user_with_selection(
-    config_flow: JaaleeConfigFlow,
-) -> None:
-    """Test user step with device selection."""
-    config_flow.async_set_unique_id = AsyncMock()
-    config_flow._abort_if_unique_id_configured = MagicMock()  # noqa: SLF001
-    config_flow.async_create_entry = MagicMock(return_value={"type": "create_entry"})
-    config_flow._async_current_ids = MagicMock(return_value=set())  # noqa: SLF001
-    config_flow._discovered_devices = {  # noqa: SLF001
-        "AA:BB:CC:DD:EE:FF": "Test Device"
-    }
-
-    await config_flow.async_step_user(user_input={CONF_ADDRESS: "AA:BB:CC:DD:EE:FF"})
-
-    config_flow.async_set_unique_id.assert_called_once_with(
-        "AA:BB:CC:DD:EE:FF", raise_on_progress=False
+async def test_async_step_bluetooth_valid_device(hass: HomeAssistant) -> None:
+    """Test discovery via bluetooth with a valid device."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={"source": config_entries.SOURCE_BLUETOOTH},
+        data=JAALEE_SERVICE_INFO,
     )
-    config_flow._abort_if_unique_id_configured.assert_called_once()  # noqa: SLF001
-    config_flow.async_create_entry.assert_called_once()
+    assert result["type"] is FlowResultType.FORM
+    assert result["step_id"] == "bluetooth_confirm"
+
+    with patch("custom_components.jaalee.async_setup_entry", return_value=True):
+        result2 = await hass.config_entries.flow.async_configure(
+            result["flow_id"], user_input={}
+        )
+
+    assert result2["type"] is FlowResultType.CREATE_ENTRY
+    assert result2["data"] == {}
+    assert result2["result"].unique_id == "FE:0E:A2:CC:C4:1F"
 
 
-@pytest.mark.asyncio
-async def test_async_step_user_no_devices(config_flow: JaaleeConfigFlow) -> None:
-    """Test user step when no devices are discovered."""
-    config_flow.hass = MagicMock()
-    config_flow._async_current_ids = MagicMock(return_value=set())  # noqa: SLF001
-    config_flow.async_abort = MagicMock(return_value={"type": "abort"})
-
-    with (
-        patch(
-            "custom_components.jaalee.config_flow.async_discovered_service_info",
-            return_value=[],
-        ),
-        patch("custom_components.jaalee.config_flow.DeviceData"),
+async def test_async_step_bluetooth_not_jaalee(hass: HomeAssistant) -> None:
+    """Test discovery via bluetooth with unsupported advertisement."""
+    with patch(
+        "custom_components.jaalee.config_flow.DeviceData.supported",
+        return_value=False,
     ):
-        await config_flow.async_step_user()
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN,
+            context={"source": config_entries.SOURCE_BLUETOOTH},
+            data=NOT_JAALEE_SERVICE_INFO,
+        )
+    assert result["type"] is FlowResultType.ABORT
+    assert result["reason"] == "not_supported"
 
-        config_flow.async_abort.assert_called_once_with(reason="no_devices_found")
+
+async def test_async_step_user_no_devices_found(hass: HomeAssistant) -> None:
+    """Test user flow aborts when no devices are discovered."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={"source": config_entries.SOURCE_USER},
+    )
+    assert result["type"] is FlowResultType.ABORT
+    assert result["reason"] == "no_devices_found"
+
+
+async def test_async_step_user_with_found_devices(hass: HomeAssistant) -> None:
+    """Test setup from discovery cache with supported devices found."""
+    with patch(
+        "custom_components.jaalee.config_flow.async_discovered_service_info",
+        return_value=[JAALEE_SERVICE_INFO],
+    ):
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN,
+            context={"source": config_entries.SOURCE_USER},
+        )
+
+    assert result["type"] is FlowResultType.FORM
+    assert result["step_id"] == "user"
+
+    with patch("custom_components.jaalee.async_setup_entry", return_value=True):
+        result2 = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            user_input={"address": "FE:0E:A2:CC:C4:1F"},
+        )
+
+    assert result2["type"] is FlowResultType.CREATE_ENTRY
+    assert result2["data"] == {}
+    assert result2["result"].unique_id == "FE:0E:A2:CC:C4:1F"
+
+
+async def test_async_step_user_device_added_between_steps(hass: HomeAssistant) -> None:
+    """Test device becomes configured between user step form and submit."""
+    with patch(
+        "custom_components.jaalee.config_flow.async_discovered_service_info",
+        return_value=[JAALEE_SERVICE_INFO],
+    ):
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN,
+            context={"source": config_entries.SOURCE_USER},
+        )
+    assert result["type"] is FlowResultType.FORM
+    assert result["step_id"] == "user"
+
+    entry = MockConfigEntry(domain=DOMAIN, unique_id="FE:0E:A2:CC:C4:1F")
+    entry.add_to_hass(hass)
+
+    with patch("custom_components.jaalee.async_setup_entry", return_value=True):
+        result2 = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            user_input={"address": "FE:0E:A2:CC:C4:1F"},
+        )
+
+    assert result2["type"] is FlowResultType.ABORT
+    assert result2["reason"] == "already_configured"
+
+
+async def test_async_step_user_with_found_devices_already_setup(
+    hass: HomeAssistant,
+) -> None:
+    """Test user flow ignores devices that are already configured."""
+    entry = MockConfigEntry(domain=DOMAIN, unique_id="FE:0E:A2:CC:C4:1F")
+    entry.add_to_hass(hass)
+
+    with patch(
+        "custom_components.jaalee.config_flow.async_discovered_service_info",
+        return_value=[JAALEE_SERVICE_INFO],
+    ):
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN,
+            context={"source": config_entries.SOURCE_USER},
+        )
+
+    assert result["type"] is FlowResultType.ABORT
+    assert result["reason"] == "no_devices_found"
+
+
+async def test_async_step_bluetooth_devices_already_setup(hass: HomeAssistant) -> None:
+    """Test bluetooth flow aborts when device already has config entry."""
+    entry = MockConfigEntry(domain=DOMAIN, unique_id="FE:0E:A2:CC:C4:1F")
+    entry.add_to_hass(hass)
+
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={"source": config_entries.SOURCE_BLUETOOTH},
+        data=JAALEE_SERVICE_INFO,
+    )
+
+    assert result["type"] is FlowResultType.ABORT
+    assert result["reason"] == "already_configured"
+
+
+async def test_async_step_bluetooth_already_in_progress(hass: HomeAssistant) -> None:
+    """Test duplicate bluetooth discovery creates already_in_progress abort."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={"source": config_entries.SOURCE_BLUETOOTH},
+        data=JAALEE_SERVICE_INFO,
+    )
+    assert result["type"] is FlowResultType.FORM
+    assert result["step_id"] == "bluetooth_confirm"
+
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={"source": config_entries.SOURCE_BLUETOOTH},
+        data=JAALEE_SERVICE_INFO,
+    )
+    assert result["type"] is FlowResultType.ABORT
+    assert result["reason"] == "already_in_progress"
+
+
+async def test_async_step_user_takes_precedence_over_discovery(
+    hass: HomeAssistant,
+) -> None:
+    """Test manual user flow can complete while discovery flow is pending."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={"source": config_entries.SOURCE_BLUETOOTH},
+        data=JAALEE_SERVICE_INFO,
+    )
+    assert result["type"] is FlowResultType.FORM
+    assert result["step_id"] == "bluetooth_confirm"
+
+    with patch(
+        "custom_components.jaalee.config_flow.async_discovered_service_info",
+        return_value=[JAALEE_SERVICE_INFO],
+    ):
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN,
+            context={"source": config_entries.SOURCE_USER},
+        )
+    assert result["type"] is FlowResultType.FORM
+
+    with patch("custom_components.jaalee.async_setup_entry", return_value=True):
+        result2 = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            user_input={"address": "FE:0E:A2:CC:C4:1F"},
+        )
+
+    assert result2["type"] is FlowResultType.CREATE_ENTRY
+    assert result2["data"] == {}
+    assert result2["result"].unique_id == "FE:0E:A2:CC:C4:1F"
+
+    assert not hass.config_entries.flow.async_progress(DOMAIN)

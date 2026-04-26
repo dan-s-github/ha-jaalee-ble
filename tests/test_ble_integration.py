@@ -2,16 +2,10 @@
 
 import json
 from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from homeassistant.components.bluetooth import BluetoothServiceInfoBleak
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
 
-from custom_components.jaalee import async_setup_entry
-from custom_components.jaalee.config_flow import JaaleeConfigFlow
-from custom_components.jaalee.const import DOMAIN
+from . import make_bluetooth_service_info
 
 
 @pytest.fixture
@@ -20,24 +14,6 @@ def ble_advertisements() -> list[dict]:
     test_file = Path(__file__).parent / "test_ble_advertisements.json"
     with test_file.open() as f:
         return json.load(f)
-
-
-@pytest.fixture
-def mock_hass() -> MagicMock:
-    """Create a mock HomeAssistant instance."""
-    hass = MagicMock(spec=HomeAssistant)
-    hass.data = {DOMAIN: {}}
-    return hass
-
-
-@pytest.fixture
-def mock_config_entry() -> MagicMock:
-    """Create a mock config entry."""
-    entry = MagicMock(spec=ConfigEntry)
-    entry.entry_id = "test_entry_jaalee"
-    entry.unique_id = "FE:0E:A2:CC:C4:1F"
-    entry.async_on_unload = MagicMock()
-    return entry
 
 
 def test_load_advertisements() -> None:
@@ -101,59 +77,26 @@ def test_rssi_values_valid(ble_advertisements: list[dict]) -> None:
         assert -100 <= rssi <= 0
 
 
-@pytest.mark.asyncio
-async def test_config_flow_with_real_advertisement(
+def test_make_bluetooth_service_info_from_advertisement(
     ble_advertisements: list[dict],
 ) -> None:
-    """Test config flow discovery with real BLE advertisement."""
-    # Use first advertisement for testing
+    """Test helper conversion from saved advertisement to discovery info."""
     ad_data = ble_advertisements[0]
+    discovery_info = make_bluetooth_service_info(ad_data)
 
-    config_flow = JaaleeConfigFlow()
-    config_flow.hass = MagicMock()
-    config_flow.async_set_unique_id = AsyncMock()
-    config_flow._abort_if_unique_id_configured = MagicMock()  # noqa: SLF001
-
-    # Create a BluetoothServiceInfoBleak-like object from advertisement
-    discovery_info = MagicMock(spec=BluetoothServiceInfoBleak)
-    discovery_info.address = ad_data["address"]
-    discovery_info.name = ad_data["name"]
-    discovery_info.rssi = ad_data["rssi"]
-    discovery_info.manufacturer_data = {
-        int(mfg_id): bytes.fromhex(data)
-        for mfg_id, data in ad_data.get("manufacturer_data", {}).items()
-    }
-    discovery_info.service_data = {
-        uuid: bytes.fromhex(data)
-        for uuid, data in ad_data.get("service_data", {}).items()
-    }
-    discovery_info.source = ad_data.get("source", "test")
-
-    with patch(
-        "custom_components.jaalee.config_flow.DeviceData"
-    ) as mock_device_data_class:
-        mock_device = MagicMock()
-        mock_device.supported.return_value = True
-        mock_device.title = "Jaalee Device"
-        mock_device.get_device_name.return_value = "Jaalee"
-        mock_device_data_class.return_value = mock_device
-
-        config_flow.async_step_bluetooth_confirm = AsyncMock(
-            return_value={"type": "form"}
-        )
-
-        await config_flow.async_step_bluetooth(discovery_info)
-
-        # Verify unique ID was set with correct address
-        config_flow.async_set_unique_id.assert_called_once_with(ad_data["address"])
-        # Verify device was checked for support
-        assert mock_device.supported.called
+    assert discovery_info.address == ad_data["address"]
+    assert discovery_info.name == ad_data["name"]
+    assert discovery_info.rssi == ad_data["rssi"]
+    assert discovery_info.manufacturer_data[76] == bytes.fromhex(
+        ad_data["manufacturer_data"]["76"]
+    )
+    uuid = "0000f525-0000-1000-8000-00805f9b34fb"
+    assert discovery_info.service_data[uuid] == bytes.fromhex(
+        ad_data["service_data"][uuid]
+    )
 
 
-@pytest.mark.asyncio
-async def test_multiple_advertisement_processing(
-    ble_advertisements: list[dict],
-) -> None:
+def test_multiple_advertisement_processing(ble_advertisements: list[dict]) -> None:
     """Test processing multiple advertisements from same device."""
     # All advertisements are from same device
     device_addresses = {ad["address"] for ad in ble_advertisements}
@@ -191,34 +134,6 @@ def test_advertisement_time_progression(ble_advertisements: list[dict]) -> None:
         # Allow for time going backwards by up to 1 second (clock drift)
         # but generally should progress
         assert time_delta > -1
-
-
-@pytest.mark.asyncio
-async def test_integration_setup_with_advertisement_device(
-    mock_hass: MagicMock, mock_config_entry: MagicMock, ble_advertisements: list[dict]
-) -> None:
-    """Test full integration setup for device from advertisements."""
-    mock_hass.config_entries.async_forward_entry_setups = AsyncMock(return_value=True)
-
-    with (
-        patch("custom_components.jaalee.JaaleeBluetoothDeviceData"),
-        patch(
-            "custom_components.jaalee.PassiveBluetoothProcessorCoordinator"
-        ) as mock_coordinator_class,
-    ):
-        mock_coordinator = MagicMock()
-        mock_coordinator.async_start = AsyncMock()
-        mock_coordinator_class.return_value = mock_coordinator
-
-        # Set unique_id from actual advertisement
-        mock_config_entry.unique_id = ble_advertisements[0]["address"]
-
-        result = await async_setup_entry(mock_hass, mock_config_entry)
-
-        assert result is True
-        # Verify coordinator was set up for the device address
-        coordinator_call = mock_coordinator_class.call_args
-        assert coordinator_call.kwargs["address"] == "FE:0E:A2:CC:C4:1F"
 
 
 def test_service_uuid_consistency(ble_advertisements: list[dict]) -> None:
