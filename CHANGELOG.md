@@ -1,3 +1,9 @@
+## v1.0.0rc1 (2026-04-27)
+
+### Fix
+
+- align HA 2026.3.1 deps and rewrite test suite
+
 ## v1.0.0rc0 (2026-04-26)
 
 ### Feat

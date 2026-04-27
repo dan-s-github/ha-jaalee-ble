@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ha-jaalee-ble"
-version = "1.0.0rc0"
+version = "1.0.0rc1"
 description = "Home Assistant integration for Jaalee BLE devices"
 readme = "README.md"
 license = { text = "MIT" }
