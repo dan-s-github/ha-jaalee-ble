@@ -37,7 +37,7 @@ dev = [
     "pycares>=5.0.0,<6",
     "pytest>=8.2.0",
     "pytest-asyncio>=1.3.0",
-    "pytest-homeassistant-custom-component==0.13.317",
+    "pytest-homeassistant-custom-component==0.13.325",
     "pyserial",
     "ruff>=0.15.0",
     "mypy>=1.8.0",
