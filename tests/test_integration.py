@@ -5,8 +5,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from homeassistant.core import HomeAssistant
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.jaalee import async_setup_entry, async_unload_entry
-from custom_components.jaalee.const import DOMAIN
+from custom_components.jaalee_ble import async_setup_entry, async_unload_entry
+from custom_components.jaalee_ble.const import DOMAIN
 
 
 async def test_async_setup_entry_success(hass: HomeAssistant) -> None:
@@ -16,7 +16,7 @@ async def test_async_setup_entry_success(hass: HomeAssistant) -> None:
 
     with (
         patch(
-            "custom_components.jaalee.PassiveBluetoothProcessorCoordinator"
+            "custom_components.jaalee_ble.PassiveBluetoothProcessorCoordinator"
         ) as mock_coordinator_class,
         patch.object(
             hass.config_entries,
@@ -50,7 +50,7 @@ async def test_async_setup_entry_creates_coordinator(hass: HomeAssistant) -> Non
 
     with (
         patch(
-            "custom_components.jaalee.PassiveBluetoothProcessorCoordinator"
+            "custom_components.jaalee_ble.PassiveBluetoothProcessorCoordinator"
         ) as mock_coordinator_class,
         patch.object(
             hass.config_entries,

@@ -8,7 +8,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.jaalee.const import DOMAIN
+from custom_components.jaalee_ble.const import DOMAIN
 
 from . import JAALEE_SERVICE_INFO, NOT_JAALEE_SERVICE_INFO
 
@@ -29,7 +29,7 @@ async def test_async_step_bluetooth_valid_device(hass: HomeAssistant) -> None:
     assert result["type"] is FlowResultType.FORM
     assert result["step_id"] == "bluetooth_confirm"
 
-    with patch("custom_components.jaalee.async_setup_entry", return_value=True):
+    with patch("custom_components.jaalee_ble.async_setup_entry", return_value=True):
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"], user_input={}
         )
@@ -42,7 +42,7 @@ async def test_async_step_bluetooth_valid_device(hass: HomeAssistant) -> None:
 async def test_async_step_bluetooth_not_jaalee(hass: HomeAssistant) -> None:
     """Test discovery via bluetooth with unsupported advertisement."""
     with patch(
-        "custom_components.jaalee.config_flow.DeviceData.supported",
+        "custom_components.jaalee_ble.config_flow.DeviceData.supported",
         return_value=False,
     ):
         result = await hass.config_entries.flow.async_init(
@@ -67,7 +67,7 @@ async def test_async_step_user_no_devices_found(hass: HomeAssistant) -> None:
 async def test_async_step_user_with_found_devices(hass: HomeAssistant) -> None:
     """Test setup from discovery cache with supported devices found."""
     with patch(
-        "custom_components.jaalee.config_flow.async_discovered_service_info",
+        "custom_components.jaalee_ble.config_flow.async_discovered_service_info",
         return_value=[JAALEE_SERVICE_INFO],
     ):
         result = await hass.config_entries.flow.async_init(
@@ -78,7 +78,7 @@ async def test_async_step_user_with_found_devices(hass: HomeAssistant) -> None:
     assert result["type"] is FlowResultType.FORM
     assert result["step_id"] == "user"
 
-    with patch("custom_components.jaalee.async_setup_entry", return_value=True):
+    with patch("custom_components.jaalee_ble.async_setup_entry", return_value=True):
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
             user_input={"address": "FE:0E:A2:CC:C4:1F"},
@@ -92,7 +92,7 @@ async def test_async_step_user_with_found_devices(hass: HomeAssistant) -> None:
 async def test_async_step_user_device_added_between_steps(hass: HomeAssistant) -> None:
     """Test device becomes configured between user step form and submit."""
     with patch(
-        "custom_components.jaalee.config_flow.async_discovered_service_info",
+        "custom_components.jaalee_ble.config_flow.async_discovered_service_info",
         return_value=[JAALEE_SERVICE_INFO],
     ):
         result = await hass.config_entries.flow.async_init(
@@ -105,7 +105,7 @@ async def test_async_step_user_device_added_between_steps(hass: HomeAssistant) -
     entry = MockConfigEntry(domain=DOMAIN, unique_id="FE:0E:A2:CC:C4:1F")
     entry.add_to_hass(hass)
 
-    with patch("custom_components.jaalee.async_setup_entry", return_value=True):
+    with patch("custom_components.jaalee_ble.async_setup_entry", return_value=True):
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
             user_input={"address": "FE:0E:A2:CC:C4:1F"},
@@ -123,7 +123,7 @@ async def test_async_step_user_with_found_devices_already_setup(
     entry.add_to_hass(hass)
 
     with patch(
-        "custom_components.jaalee.config_flow.async_discovered_service_info",
+        "custom_components.jaalee_ble.config_flow.async_discovered_service_info",
         return_value=[JAALEE_SERVICE_INFO],
     ):
         result = await hass.config_entries.flow.async_init(
@@ -182,7 +182,7 @@ async def test_async_step_user_takes_precedence_over_discovery(
     assert result["step_id"] == "bluetooth_confirm"
 
     with patch(
-        "custom_components.jaalee.config_flow.async_discovered_service_info",
+        "custom_components.jaalee_ble.config_flow.async_discovered_service_info",
         return_value=[JAALEE_SERVICE_INFO],
     ):
         result = await hass.config_entries.flow.async_init(
@@ -191,7 +191,7 @@ async def test_async_step_user_takes_precedence_over_discovery(
         )
     assert result["type"] is FlowResultType.FORM
 
-    with patch("custom_components.jaalee.async_setup_entry", return_value=True):
+    with patch("custom_components.jaalee_ble.async_setup_entry", return_value=True):
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
             user_input={"address": "FE:0E:A2:CC:C4:1F"},
