@@ -1,6 +1,6 @@
 """Test constants for jaalee integration."""
 
-from custom_components.jaalee_ble.const import DOMAIN
+from custom_components.jaalee.const import DOMAIN
 
 
 def test_domain_constant() -> None:

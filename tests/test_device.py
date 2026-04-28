@@ -6,7 +6,7 @@ from homeassistant.components.bluetooth.passive_update_processor import (
     PassiveBluetoothEntityKey,
 )
 
-from custom_components.jaalee_ble.device import device_key_to_bluetooth_entity_key
+from custom_components.jaalee.device import device_key_to_bluetooth_entity_key
 
 
 def test_device_key_to_bluetooth_entity_key() -> None:

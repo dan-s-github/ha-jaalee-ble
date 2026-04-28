@@ -15,7 +15,7 @@ from homeassistant.const import (
 from jaalee_ble import SensorDeviceClass as JaaleeSensorDeviceClass
 from jaalee_ble import Units
 
-from custom_components.jaalee_ble.sensor import (
+from custom_components.jaalee.sensor import (
     CUSTOM_SENSOR_DESCRIPTIONS,
     SENSOR_DESCRIPTIONS,
     TX_POWER_KEY,
@@ -141,13 +141,13 @@ def test_sensor_update_to_bluetooth_data_update_with_battery() -> None:
     mock_sensor_update.entity_values = {mock_device_key: mock_sensor_value}
 
     with patch(
-        "custom_components.jaalee_ble.sensor.device_key_to_bluetooth_entity_key"
+        "custom_components.jaalee.sensor.device_key_to_bluetooth_entity_key"
     ) as mock_convert:
         mock_entity_key = MagicMock()
         mock_convert.return_value = mock_entity_key
 
         with patch(
-            "custom_components.jaalee_ble.sensor.sensor_device_info_to_hass_device_info"
+            "custom_components.jaalee.sensor.sensor_device_info_to_hass_device_info"
         ):
             sensor_update_to_bluetooth_data_update(mock_sensor_update)
 
