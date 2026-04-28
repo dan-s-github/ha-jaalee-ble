@@ -1,3 +1,3 @@
 """Constants for jaalee."""
 
-DOMAIN = "jaalee"
+DOMAIN = "jaalee_ble"
