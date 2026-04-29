@@ -10,7 +10,6 @@ from homeassistant.components.bluetooth.passive_update_processor import (
     PassiveBluetoothProcessorCoordinator,
 )
 from homeassistant.const import Platform
-
 from jaalee_ble import JaaleeBluetoothDeviceData
 
 from .const import DOMAIN

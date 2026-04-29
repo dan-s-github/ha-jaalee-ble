@@ -22,4 +22,3 @@ mkdir -p "${PWD}/config"
 if [[ ! -e "${PWD}/config/custom_components" ]]; then
     ln -s ../custom_components "${PWD}/config/custom_components"
 fi
-

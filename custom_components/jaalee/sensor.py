@@ -27,7 +27,6 @@ from homeassistant.const import (
     UnitOfTemperature,
 )
 from homeassistant.helpers.sensor import sensor_device_info_to_hass_device_info
-
 from jaalee_ble import SensorDeviceClass as JaaleeSensorDeviceClass
 from jaalee_ble import SensorUpdate, Units
 
