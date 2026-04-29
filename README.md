@@ -1,10 +1,16 @@
 # Jaalee BLE
 
+[![HACS][hacsbadge]][hacs]
 [![GitHub Release][releases-shield]][releases]
-[![GitHub Activity][commits-shield]][commits]
+[![Integration Usage][downloads-shield]][downloads]
+
+[![Home Assistant][ha-shield]][ha]
+[![Python Version][python-shield]][python]
 [![License][license-shield]](LICENSE)
 
-[![hacs][hacsbadge]][hacs]
+[![Tests][tests-shield]][tests]
+[![Code Style: Ruff][ruff-shield]][ruff]
+[![GitHub Activity][commits-shield]][commits]
 
 Home Assistant integration for Jaalee Bluetooth Low Energy (BLE) devices.
 
@@ -125,11 +131,21 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-[releases-shield]: https://img.shields.io/github/release/dan-s-github/ha-jaalee-ble.svg?style=for-the-badge
+[releases-shield]: https://img.shields.io/github/release/dan-s-github/ha-jaalee-ble.svg?style=flat&logo=github
 [releases]: https://github.com/dan-s-github/ha-jaalee-ble/releases
-[commits-shield]: https://img.shields.io/github/commit-activity/y/dan-s-github/ha-jaalee-ble.svg?style=for-the-badge
+[downloads-shield]: https://img.shields.io/badge/dynamic/json?color=41BDF5&logo=home-assistant&label=integration%20usage&suffix=%20installs&cacheSeconds=15600&url=https://analytics.home-assistant.io/custom_integrations.json&query=%24.jaalee_ble.total
+[downloads]: https://analytics.home-assistant.io/custom_integrations/jaalee_ble
+[commits-shield]: https://img.shields.io/github/commit-activity/y/dan-s-github/ha-jaalee-ble.svg?style=flat&logo=github
 [commits]: https://github.com/dan-s-github/ha-jaalee-ble/commits/main
-[license-shield]: https://img.shields.io/github/license/dan-s-github/ha-jaalee-ble.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/dan-s-github/ha-jaalee-ble.svg?style=flat
+[python-shield]: https://img.shields.io/badge/python-3.14+-blue.svg?style=flat&logo=python&logoColor=white
+[python]: https://www.python.org/
+[ha-shield]: https://img.shields.io/badge/Home%20Assistant-2026.3.0+-blue.svg?style=flat&logo=homeassistant&logoColor=white
+[ha]: https://www.home-assistant.io/
+[tests-shield]: https://img.shields.io/github/actions/workflow/status/dan-s-github/ha-jaalee-ble/ci.yml?branch=main&style=flat&logo=github
+[tests]: https://github.com/dan-s-github/ha-jaalee-ble/actions/workflows/ci.yml
+[ruff-shield]: https://img.shields.io/badge/code%20style-ruff-000000.svg?style=flat&logo=ruff&logoColor=white
+[ruff]: https://github.com/astral-sh/ruff
 [hacs]: https://github.com/hacs/integration
-[hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
+[hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=flat&logo=homeassistant&logoColor=white
 [issues]: https://github.com/dan-s-github/ha-jaalee-ble/issues
