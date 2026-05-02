@@ -2,7 +2,6 @@
 
 [![HACS][hacsbadge]][hacs]
 [![GitHub Release][releases-shield]][releases]
-[![Integration Usage][downloads-shield]][downloads]
 
 [![Home Assistant][ha-shield]][ha]
 [![Python Version][python-shield]][python]
@@ -15,6 +14,16 @@
 Home Assistant integration for Jaalee Bluetooth Low Energy (BLE) devices.
 
 This integration automatically discovers and monitors Jaalee BLE sensors through passive Bluetooth scanning. It supports temperature, humidity, battery percentage, and Tx Power (dBm) diagnostics. Additional sensor types (CO2, voltage, light, pressure) are prepared for when supported by Jaalee devices. UV is planned for future parser support.
+
+## Supported Devices
+
+### Jaalee JHT Temperature and Humidity Sensor
+
+| Front | Back |
+|:-----:|:----:|
+| ![Jaalee JHT front](docs/jaalee_jht_front.png) | ![Jaalee JHT back](docs/jaalee_jht_back.png) |
+
+The JHT sensor broadcasts temperature, humidity, battery level, and Tx Power via iBeacon telemetry with service data UUID `0000f525-0000-1000-8000-00805f9b34fb`.
 
 ## Features
 
@@ -79,10 +88,6 @@ The integration will automatically create sensor entities for:
 - On Linux hosts, Bluetooth passthrough may work with host networking/privileged mode and a D-Bus mount.
 - If BLE discovery still does not work in-container, run Home Assistant directly on the host or test on a physical Linux machine.
 
-## Supported Devices
-
-This integration supports Jaalee BLE devices that broadcast iBeacon telemetry data with service data UUID `0000f525-0000-1000-8000-00805f9b34fb`.
-
 ## Troubleshooting
 
 ### Device Not Discovered
@@ -133,8 +138,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 [releases-shield]: https://img.shields.io/github/release/dan-s-github/ha-jaalee-ble.svg?style=flat&logo=github
 [releases]: https://github.com/dan-s-github/ha-jaalee-ble/releases
-[downloads-shield]: https://img.shields.io/badge/dynamic/json?color=41BDF5&logo=home-assistant&label=integration%20usage&suffix=%20installs&cacheSeconds=15600&url=https://analytics.home-assistant.io/custom_integrations.json&query=%24.jaalee_ble.total
-[downloads]: https://analytics.home-assistant.io/custom_integrations/jaalee_ble
 [commits-shield]: https://img.shields.io/github/commit-activity/y/dan-s-github/ha-jaalee-ble.svg?style=flat&logo=github
 [commits]: https://github.com/dan-s-github/ha-jaalee-ble/commits/main
 [license-shield]: https://img.shields.io/github/license/dan-s-github/ha-jaalee-ble.svg?style=flat
