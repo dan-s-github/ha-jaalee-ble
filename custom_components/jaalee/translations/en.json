@@ -9,13 +9,27 @@
     "flow_title": "{name}",
     "step": {
       "bluetooth_confirm": {
+        "data": {
+          "sensor_model": "Sensor model"
+        },
         "description": "Do you want to set up {name}?"
       },
       "user": {
         "data": {
-          "address": "[%key:common::config_flow::data::device%]"
+          "address": "[%key:common::config_flow::data::device%]",
+          "sensor_model": "Sensor model"
         },
         "description": "Select a discovered Jaalee BLE device to set up."
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "sensor_model": "Sensor model"
+        },
+        "description": "Select the temperature/humidity sensor model used by this device."
       }
     }
   }
