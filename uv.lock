@@ -1009,7 +1009,7 @@ wheels = [
 
 [[package]]
 name = "ha-jaalee-ble"
-version = "1.0.0rc1"
+version = "1.0.0rc2"
 source = { editable = "." }
 dependencies = [
     { name = "jaalee-ble" },
@@ -1034,7 +1034,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "jaalee-ble", specifier = "==1.1.0rc1" }]
+requires-dist = [{ name = "jaalee-ble", specifier = "==1.1.0" }]
 
 [package.metadata.requires-dev]
 dev = [
@@ -1269,7 +1269,7 @@ wheels = [
 
 [[package]]
 name = "jaalee-ble"
-version = "1.1.0rc1"
+version = "1.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "bluetooth-data-tools" },
@@ -1277,9 +1277,9 @@ dependencies = [
     { name = "habluetooth" },
     { name = "sensor-state-data" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/9a/f4/6183bdbd5605c544f916829a4f82ccc74e7231fdaffb88ef2e39edc67709/jaalee_ble-1.1.0rc1.tar.gz", hash = "sha256:73949877d1066f5ca9002b90031a3e7ec489d159c9b797efefea66b55a6291d9", size = 9947, upload-time = "2026-05-05T09:43:26.638Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/42/36/47d7596e12d43454b9c3ee93463f2312149035c4e4eb83304b9febd043f6/jaalee_ble-1.1.0.tar.gz", hash = "sha256:ada48255e913c31cafc0f2c24d50ea6527fbf0313f67bfa648a5678b220ddbfc", size = 9943, upload-time = "2026-05-05T22:15:26.297Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/39/3c/1c8002e2b60e198b79e7e6a4228b1ab27c002f4b584a4b3ad4d66a419c98/jaalee_ble-1.1.0rc1-py3-none-any.whl", hash = "sha256:3747f95f4b84549f2c794e526b8263a5b44971c64e965ee013ee768f4a170bb3", size = 5966, upload-time = "2026-05-05T09:43:25.439Z" },
+    { url = "https://files.pythonhosted.org/packages/80/53/a60b64d39de54a342f3bfb111300800fb8c8bbaf7931a29b3dc1c6523c45/jaalee_ble-1.1.0-py3-none-any.whl", hash = "sha256:615c3827aaf3873c004c647585c130da605ba0d57179ef4e71a894a7f27c688d", size = 5923, upload-time = "2026-05-05T22:15:25.105Z" },
 ]
 
 [[package]]
