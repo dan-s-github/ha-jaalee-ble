@@ -19,11 +19,21 @@ This integration automatically discovers and monitors Jaalee BLE sensors through
 
 ### Jaalee JHT Temperature and Humidity Sensor
 
-| Front | Back |
-|:-----:|:----:|
-| ![Jaalee JHT front](docs/jaalee_jht_front.png) | ![Jaalee JHT back](docs/jaalee_jht_back.png) |
+| Front | Back | Back (SHT20) |
+|:-----:|:----:|:------------:|
+| ![Jaalee JHT front](docs/jaalee_jht_front.png) | ![Jaalee JHT back](docs/jaalee_jht_back.png) | ![Jaalee JHT back with SHT20](docs/jaalee_jht_back_sht20.png) |
+
+The location of the two holes on the back may help identify the device version.
 
 The JHT sensor broadcasts temperature, humidity, battery level, and Tx Power via iBeacon telemetry with service data UUID `0000f525-0000-1000-8000-00805f9b34fb`.
+
+## How to find your sensor model
+
+| Device (opened) | Sensor |
+|:---------------:|:--------------------------:|
+| ![Jaalee sensor opened](docs/jaalee_open.png) | ![SHT20 sensor model in Home Assistant](docs/jaalee_sht20.png) |
+
+Sensor model selection is part of the config flow. Open **Settings** -> **Devices & Services** -> **Jaalee BLE** -> **Configure**, then choose the correct value in **Sensor model**.
 
 ## Features
 

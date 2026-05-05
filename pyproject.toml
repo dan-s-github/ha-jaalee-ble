@@ -23,7 +23,7 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
-    "jaalee-ble==1.1.0rc1",
+    "jaalee-ble==1.1.0",
 ]
 
 [dependency-groups]

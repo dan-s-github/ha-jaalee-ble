@@ -22,7 +22,7 @@
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/dan-s-github/ha-jaalee-ble/issues",
   "requirements": [
-    "jaalee-ble==1.1.0rc1"
+    "jaalee-ble==1.1.0"
   ],
   "version": "1.0.0rc2"
 }
