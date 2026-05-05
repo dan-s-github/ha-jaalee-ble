@@ -1,3 +1,9 @@
+## v1.0.0rc2 (2026-05-05)
+
+### Feat
+
+- add configurable Jaalee sensor model
+
 ## v1.0.0rc1 (2026-04-27)
 
 ### Fix
