@@ -10,9 +10,9 @@ from homeassistant.components.bluetooth.passive_update_processor import (
     PassiveBluetoothProcessorCoordinator,
 )
 from homeassistant.const import Platform
-from jaalee_ble import JaaleeBluetoothDeviceData
+from jaalee_ble import JaaleeBluetoothDeviceData, SensorModel
 
-from .const import DOMAIN
+from .const import CONF_SENSOR_MODEL, DEFAULT_SENSOR_MODEL, DOMAIN
 
 if TYPE_CHECKING:
     from homeassistant.config_entries import ConfigEntry
@@ -28,7 +28,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     address = entry.unique_id
     if address is None:
         return False
-    data = JaaleeBluetoothDeviceData()
+    sensor_model = entry.options.get(
+        CONF_SENSOR_MODEL,
+        entry.data.get(CONF_SENSOR_MODEL, DEFAULT_SENSOR_MODEL),
+    )
+    data = _create_device_data(sensor_model)
     coordinator = hass.data.setdefault(DOMAIN, {})[entry.entry_id] = (
         PassiveBluetoothProcessorCoordinator(
             hass,
@@ -51,3 +55,19 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.data[DOMAIN].pop(entry.entry_id)
 
     return unload_ok
+
+
+def _create_device_data(sensor_model: str) -> JaaleeBluetoothDeviceData:
+    """Create device data with optional model selection support."""
+    try:
+        model = SensorModel(sensor_model)
+    except ValueError:
+        model = SensorModel.SHT20
+
+    try:
+        return JaaleeBluetoothDeviceData(sensor_model=model)
+    except TypeError:
+        _LOGGER.debug(
+            "jaalee-ble does not support sensor_model yet; using library default"
+        )
+        return JaaleeBluetoothDeviceData()

@@ -8,7 +8,12 @@ from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.jaalee.const import DOMAIN
+from custom_components.jaalee.const import (
+    CONF_SENSOR_MODEL,
+    DEFAULT_SENSOR_MODEL,
+    DOMAIN,
+    SENSOR_MODEL_SHT31,
+)
 
 from . import JAALEE_SERVICE_INFO, NOT_JAALEE_SERVICE_INFO
 
@@ -31,11 +36,12 @@ async def test_async_step_bluetooth_valid_device(hass: HomeAssistant) -> None:
 
     with patch("custom_components.jaalee.async_setup_entry", return_value=True):
         result2 = await hass.config_entries.flow.async_configure(
-            result["flow_id"], user_input={}
+            result["flow_id"],
+            user_input={CONF_SENSOR_MODEL: DEFAULT_SENSOR_MODEL},
         )
 
     assert result2["type"] is FlowResultType.CREATE_ENTRY
-    assert result2["data"] == {}
+    assert result2["data"] == {CONF_SENSOR_MODEL: DEFAULT_SENSOR_MODEL}
     assert result2["result"].unique_id == "FE:0E:A2:CC:C4:1F"
 
 
@@ -81,11 +87,14 @@ async def test_async_step_user_with_found_devices(hass: HomeAssistant) -> None:
     with patch("custom_components.jaalee.async_setup_entry", return_value=True):
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
-            user_input={"address": "FE:0E:A2:CC:C4:1F"},
+            user_input={
+                "address": "FE:0E:A2:CC:C4:1F",
+                CONF_SENSOR_MODEL: DEFAULT_SENSOR_MODEL,
+            },
         )
 
     assert result2["type"] is FlowResultType.CREATE_ENTRY
-    assert result2["data"] == {}
+    assert result2["data"] == {CONF_SENSOR_MODEL: DEFAULT_SENSOR_MODEL}
     assert result2["result"].unique_id == "FE:0E:A2:CC:C4:1F"
 
 
@@ -108,7 +117,10 @@ async def test_async_step_user_device_added_between_steps(hass: HomeAssistant) -
     with patch("custom_components.jaalee.async_setup_entry", return_value=True):
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
-            user_input={"address": "FE:0E:A2:CC:C4:1F"},
+            user_input={
+                "address": "FE:0E:A2:CC:C4:1F",
+                CONF_SENSOR_MODEL: DEFAULT_SENSOR_MODEL,
+            },
         )
 
     assert result2["type"] is FlowResultType.ABORT
@@ -194,11 +206,35 @@ async def test_async_step_user_takes_precedence_over_discovery(
     with patch("custom_components.jaalee.async_setup_entry", return_value=True):
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
-            user_input={"address": "FE:0E:A2:CC:C4:1F"},
+            user_input={
+                "address": "FE:0E:A2:CC:C4:1F",
+                CONF_SENSOR_MODEL: DEFAULT_SENSOR_MODEL,
+            },
         )
 
     assert result2["type"] is FlowResultType.CREATE_ENTRY
-    assert result2["data"] == {}
+    assert result2["data"] == {CONF_SENSOR_MODEL: DEFAULT_SENSOR_MODEL}
     assert result2["result"].unique_id == "FE:0E:A2:CC:C4:1F"
 
     assert not hass.config_entries.flow.async_progress(DOMAIN)
+
+
+async def test_options_flow_updates_sensor_model(hass: HomeAssistant) -> None:
+    """Test options flow updates sensor model selection."""
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        unique_id="FE:0E:A2:CC:C4:1F",
+        data={CONF_SENSOR_MODEL: DEFAULT_SENSOR_MODEL},
+    )
+    entry.add_to_hass(hass)
+
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+    assert result["type"] is FlowResultType.FORM
+    assert result["step_id"] == "init"
+
+    result2 = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        user_input={CONF_SENSOR_MODEL: SENSOR_MODEL_SHT31},
+    )
+    assert result2["type"] is FlowResultType.CREATE_ENTRY
+    assert result2["data"] == {CONF_SENSOR_MODEL: SENSOR_MODEL_SHT31}
