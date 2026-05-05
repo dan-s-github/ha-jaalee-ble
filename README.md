@@ -48,8 +48,8 @@ Sensor model selection is part of the config flow. Open **Settings** -> **Device
 
 ## Requirements
 
-- Home Assistant 2026.3.0 or newer
-- Python 3.14 or newer
+- Home Assistant 2026.3.0 or newer (tested with 2026.3.1)
+- Python 3.14.2 or newer
 - Bluetooth adapter (built-in or USB)
 - Jaalee BLE device broadcasting iBeacon telemetry
 
@@ -59,7 +59,7 @@ Sensor model selection is part of the config flow. Open **Settings** -> **Device
 
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=dan-s-github&repository=ha-jaalee-ble&category=Integration)
 
-"Download" and Restart Home Assistant
+Click **Download** in HACS, then restart Home Assistant.
 
 ### Manual Installation
 
