@@ -18,3 +18,11 @@ updates:
     ignore:
       # Dependabot should not update Home Assistant as that should match the homeassistant key in hacs.json
       - dependency-name: "homeassistant"
+      # habluetooth, serialx, and aioesphomeapi are pinned to match the exact
+      # versions Home Assistant's bluetooth/usb/esphome components hard-require
+      # (see the pin comment in pyproject.toml). Bumping them here would only
+      # decouple the test env from what a real HA install actually loads, so
+      # they should move in lockstep with the pinned "homeassistant" version.
+      - dependency-name: "habluetooth"
+      - dependency-name: "serialx"
+      - dependency-name: "aioesphomeapi"

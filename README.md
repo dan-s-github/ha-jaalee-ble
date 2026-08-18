@@ -48,7 +48,7 @@ Sensor model selection is part of the config flow. Open **Settings** -> **Device
 
 ## Requirements
 
-- Home Assistant 2026.3.0 or newer (tested with 2026.3.1)
+- Home Assistant 2026.7.0 or newer
 - Python 3.14.2 or newer
 - Bluetooth adapter (built-in or USB)
 - Jaalee BLE device broadcasting iBeacon telemetry
@@ -91,7 +91,7 @@ The integration will automatically create sensor entities for:
 - Run type checks with `uv run --group dev mypy custom_components`.
 - Run all pre-commit checks with `pre-commit run --all-files`.
 - Dependency policy: pin the Home Assistant version we target and rely on its dependency set for transitive packages; avoid manually pinning Home Assistant internals unless there is a documented compatibility break.
-- Keep `pycares>=5.0.0,<6` in the dev dependency group; Home Assistant 2026.3.0 requires pycares 5.x.
+- Keep `pycares>=5.0.0,<6` in the dev dependency group; Home Assistant 2026.7.0 requires pycares 5.x.
 - On macOS hosts, the VS Code devcontainer cannot map the host Bluetooth adapter for Home Assistant BLE testing.
 - On Linux hosts, configure the devcontainer with `--network=host`, `--cap-add=NET_ADMIN`, and `--cap-add=NET_RAW`; these capabilities are required for Home Assistant Bluetooth adapter management and automatic adapter recovery.
 - On Linux hosts, mount D-Bus (`/run/dbus`) into the devcontainer if you need full adapter introspection and control.
@@ -153,7 +153,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 [license-shield]: https://img.shields.io/github/license/dan-s-github/ha-jaalee-ble.svg?style=flat
 [python-shield]: https://img.shields.io/badge/python-3.14+-blue.svg?style=flat&logo=python&logoColor=white
 [python]: https://www.python.org/
-[ha-shield]: https://img.shields.io/badge/Home%20Assistant-2026.3.0+-blue.svg?style=flat&logo=homeassistant&logoColor=white
+[ha-shield]: https://img.shields.io/badge/Home%20Assistant-2026.7.0+-blue.svg?style=flat&logo=homeassistant&logoColor=white
 [ha]: https://www.home-assistant.io/
 [tests-shield]: https://img.shields.io/github/actions/workflow/status/dan-s-github/ha-jaalee-ble/ci.yml?branch=main&style=flat&logo=github
 [tests]: https://github.com/dan-s-github/ha-jaalee-ble/actions/workflows/ci.yml
