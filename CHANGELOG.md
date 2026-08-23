@@ -1,3 +1,9 @@
+## v1.0.1 (2026-08-23)
+
+### Fix
+
+- align HA 2026.7 deps and replace deprecated CO2 unit constant
+
 ## v1.0.0 (2026-05-06)
 
 ## v1.0.0rc3 (2026-05-05)
