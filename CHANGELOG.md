@@ -1,3 +1,14 @@
+## v1.0.2rc0 (2026-10-31)
+
+### Fix
+
+- resolve translation key references in en.json
+- discover sensors from iBeacon data without the scan response
+
+### Refactor
+
+- modernize integration setup and remove dead code
+
 ## v1.0.1 (2026-08-23)
 
 ### Fix
