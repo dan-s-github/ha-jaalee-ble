@@ -55,11 +55,13 @@ class JaaleeConfigFlow(ConfigFlow, domain=DOMAIN):
         self, discovery_info: BluetoothServiceInfoBleak
     ) -> ConfigFlowResult:
         """Handle the bluetooth discovery step."""
-        await self.async_set_unique_id(discovery_info.address)
-        self._abort_if_unique_id_configured()
+        # The iBeacon matcher lets in every iBeacon nearby; reject foreign ones
+        # before claiming the address as this flow's unique_id.
         device = DeviceData()
         if not device.supported(discovery_info):
             return self.async_abort(reason="not_supported")
+        await self.async_set_unique_id(discovery_info.address)
+        self._abort_if_unique_id_configured()
         self._discovery_info = discovery_info
         self._discovered_device = device
         return await self.async_step_bluetooth_confirm()
