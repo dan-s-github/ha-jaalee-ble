@@ -9,7 +9,6 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 from custom_components.jaalee import async_setup_entry, async_unload_entry
 from custom_components.jaalee.const import (
     CONF_SENSOR_MODEL,
-    DEFAULT_SENSOR_MODEL,
     DOMAIN,
     SENSOR_MODEL_SHT31,
 )
@@ -37,7 +36,7 @@ async def test_async_setup_entry_success(hass: HomeAssistant) -> None:
         result = await async_setup_entry(hass, entry)
 
     assert result is True
-    assert entry.entry_id in hass.data[DOMAIN]
+    assert entry.runtime_data is mock_coordinator
 
 
 async def test_async_setup_entry_no_unique_id(hass: HomeAssistant) -> None:
@@ -112,55 +111,9 @@ async def test_async_setup_entry_passes_sensor_model_to_device_data(
     mock_device_data_class.assert_called_once_with(sensor_model=SensorModel.SHT31)
 
 
-async def test_async_setup_entry_sensor_model_fallback_for_old_library(
-    hass: HomeAssistant,
-) -> None:
-    """Test setup falls back when jaalee-ble doesn't support sensor_model yet."""
-    entry = MockConfigEntry(
-        domain=DOMAIN,
-        unique_id="FE:0E:A2:CC:C4:1F",
-        data={CONF_SENSOR_MODEL: DEFAULT_SENSOR_MODEL},
-    )
-    entry.add_to_hass(hass)
-
-    with (
-        patch(
-            "custom_components.jaalee.PassiveBluetoothProcessorCoordinator"
-        ) as mock_coordinator_class,
-        patch(
-            "custom_components.jaalee.JaaleeBluetoothDeviceData"
-        ) as mock_device_data_class,
-        patch.object(
-            hass.config_entries,
-            "async_forward_entry_setups",
-            AsyncMock(return_value=True),
-        ),
-    ):
-        mock_coordinator = MagicMock()
-        mock_coordinator.async_start = MagicMock(return_value=lambda: None)
-        mock_coordinator_class.return_value = mock_coordinator
-
-        fallback_device_data = MagicMock()
-        fallback_device_data.update = MagicMock()
-        mock_device_data_class.side_effect = [
-            TypeError("unexpected keyword argument 'sensor_model'"),
-            fallback_device_data,
-        ]
-
-        result = await async_setup_entry(hass, entry)
-
-    assert result is True
-    assert mock_device_data_class.call_count == 2
-    assert mock_device_data_class.call_args_list[0].kwargs == {
-        "sensor_model": SensorModel.SHT20
-    }
-    assert mock_device_data_class.call_args_list[1].kwargs == {}
-
-
 async def test_async_unload_entry_success(hass: HomeAssistant) -> None:
     """Test successful unload of a config entry."""
     entry = MockConfigEntry(domain=DOMAIN, unique_id="FE:0E:A2:CC:C4:1F")
-    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = MagicMock()
 
     with patch.object(
         hass.config_entries,
@@ -170,13 +123,11 @@ async def test_async_unload_entry_success(hass: HomeAssistant) -> None:
         result = await async_unload_entry(hass, entry)
 
     assert result is True
-    assert entry.entry_id not in hass.data[DOMAIN]
 
 
 async def test_async_unload_entry_failure(hass: HomeAssistant) -> None:
     """Test unload when platform unload fails."""
     entry = MockConfigEntry(domain=DOMAIN, unique_id="FE:0E:A2:CC:C4:1F")
-    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = MagicMock()
 
     with patch.object(
         hass.config_entries,
@@ -186,4 +137,3 @@ async def test_async_unload_entry_failure(hass: HomeAssistant) -> None:
         result = await async_unload_entry(hass, entry)
 
     assert result is False
-    assert entry.entry_id in hass.data[DOMAIN]

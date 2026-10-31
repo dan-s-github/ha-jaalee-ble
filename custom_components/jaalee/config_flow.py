@@ -45,9 +45,11 @@ class JaaleeConfigFlow(ConfigFlow, domain=DOMAIN):
         self._discovered_devices: dict[str, str] = {}
 
     @staticmethod
-    def async_get_options_flow(config_entry: ConfigEntry) -> JaaleeOptionsFlow:
+    def async_get_options_flow(
+        config_entry: ConfigEntry,  # noqa: ARG004
+    ) -> JaaleeOptionsFlow:
         """Get options flow for this handler."""
-        return JaaleeOptionsFlow(config_entry)
+        return JaaleeOptionsFlow()
 
     async def async_step_bluetooth(
         self, discovery_info: BluetoothServiceInfoBleak
@@ -141,10 +143,6 @@ class JaaleeConfigFlow(ConfigFlow, domain=DOMAIN):
 class JaaleeOptionsFlow(OptionsFlow):
     """Handle Jaalee options flow."""
 
-    def __init__(self, config_entry: ConfigEntry) -> None:
-        """Initialize options flow."""
-        self._config_entry = config_entry
-
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
@@ -155,9 +153,9 @@ class JaaleeOptionsFlow(OptionsFlow):
                 data={CONF_SENSOR_MODEL: user_input[CONF_SENSOR_MODEL]},
             )
 
-        current_model = self._config_entry.options.get(
+        current_model = self.config_entry.options.get(
             CONF_SENSOR_MODEL,
-            self._config_entry.data.get(CONF_SENSOR_MODEL, DEFAULT_SENSOR_MODEL),
+            self.config_entry.data.get(CONF_SENSOR_MODEL, DEFAULT_SENSOR_MODEL),
         )
         default_model = (
             current_model if current_model in SENSOR_MODELS else DEFAULT_SENSOR_MODEL

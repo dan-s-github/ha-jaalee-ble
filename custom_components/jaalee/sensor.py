@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING, cast
 from homeassistant.components.bluetooth.passive_update_processor import (
     PassiveBluetoothDataProcessor,
     PassiveBluetoothDataUpdate,
-    PassiveBluetoothProcessorCoordinator,
     PassiveBluetoothProcessorEntity,
 )
 from homeassistant.components.sensor import (
@@ -30,25 +29,19 @@ from homeassistant.helpers.sensor import sensor_device_info_to_hass_device_info
 from jaalee_ble import SensorDeviceClass as JaaleeSensorDeviceClass
 from jaalee_ble import SensorUpdate, Units
 
-from .const import DOMAIN
 from .device import device_key_to_bluetooth_entity_key
 
 if TYPE_CHECKING:
-    from homeassistant.config_entries import ConfigEntry
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-TX_POWER_KEY = "tx_power"
+    from . import JaaleeConfigEntry
 
-JAALEE_LIGHT_DEVICE_CLASS = getattr(
-    JaaleeSensorDeviceClass,
-    "LIGHT",
-    getattr(JaaleeSensorDeviceClass, "ILLUMINANCE", None),
-)
+TX_POWER_KEY = "tx_power"
 
 # Sensor type configurations for Home Assistant integration.
 #
-# CURRENT PARSER CAPABILITIES (jaalee-ble v1.0.0):
+# CURRENT PARSER CAPABILITIES (jaalee-ble v1.1.0):
 #   Battery percentage, Humidity percentage, Temperature (Celsius), Tx Power (dBm)
 #
 # FORWARD-LOOKING CONFIGURATIONS (Ready when parser adds support):
@@ -117,6 +110,12 @@ SENSOR_DESCRIPTIONS = {
         native_unit_of_measurement=UnitOfPressure.HPA,
         state_class=SensorStateClass.MEASUREMENT,
     ),
+    (JaaleeSensorDeviceClass.ILLUMINANCE, Units.LIGHT_LUX): SensorEntityDescription(
+        key=f"{JaaleeSensorDeviceClass.ILLUMINANCE}_{Units.LIGHT_LUX}",
+        device_class=SensorDeviceClass.ILLUMINANCE,
+        native_unit_of_measurement=LIGHT_LUX,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
 }
 
 CUSTOM_SENSOR_DESCRIPTIONS = {
@@ -128,16 +127,6 @@ CUSTOM_SENSOR_DESCRIPTIONS = {
         entity_registry_enabled_default=False,
     ),
 }
-
-if JAALEE_LIGHT_DEVICE_CLASS is not None:
-    SENSOR_DESCRIPTIONS[(JAALEE_LIGHT_DEVICE_CLASS, Units.LIGHT_LUX)] = (
-        SensorEntityDescription(
-            key=f"{JAALEE_LIGHT_DEVICE_CLASS}_{Units.LIGHT_LUX}",
-            device_class=SensorDeviceClass.ILLUMINANCE,
-            native_unit_of_measurement=LIGHT_LUX,
-            state_class=SensorStateClass.MEASUREMENT,
-        )
-    )
 
 
 def sensor_update_to_bluetooth_data_update(
@@ -192,14 +181,12 @@ def sensor_update_to_bluetooth_data_update(
 
 
 async def async_setup_entry(
-    hass: HomeAssistant,
-    entry: ConfigEntry,
+    hass: HomeAssistant,  # noqa: ARG001
+    entry: JaaleeConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the Jaalee BLE sensors."""
-    coordinator: PassiveBluetoothProcessorCoordinator = hass.data[DOMAIN][
-        entry.entry_id
-    ]
+    coordinator = entry.runtime_data
     processor = PassiveBluetoothDataProcessor(sensor_update_to_bluetooth_data_update)
     entry.async_on_unload(
         processor.async_add_entities_listener(
