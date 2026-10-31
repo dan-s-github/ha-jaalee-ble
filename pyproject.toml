@@ -74,5 +74,10 @@ ignore_missing_imports = true
 name = "cz_conventional_commits"
 version_provider = "pep621"
 version_files = ["custom_components/jaalee/manifest.json:version"]
+# Keep the project version recorded in uv.lock in sync; cz bump commits with -a,
+# so the regenerated lockfile lands in the bump commit. $UV is the uv binary
+# that launched `uv run`; plain `uv` would resolve to the older copy that
+# homeassistant installs into the venv and rewrite the lockfile format.
+pre_bump_hooks = ["${UV:-uv} lock"]
 tag_format = "v$version"
 update_changelog_on_bump = true
