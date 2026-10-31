@@ -85,6 +85,9 @@ jobs:
           TAG="${{ steps.release_tag.outputs.tag }}"
           if gh release view "$TAG" >/dev/null 2>&1; then
             echo "Release $TAG already exists; skipping creation."
+          elif [[ "${{ inputs.increment }}" == *_RC ]]; then
+            # Mark RCs as prereleases so HACS only offers them to beta users.
+            gh release create "$TAG" --generate-notes --prerelease
           else
             gh release create "$TAG" --generate-notes
           fi
