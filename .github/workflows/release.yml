@@ -47,7 +47,7 @@ jobs:
           cache-dependency-path: "uv.lock"
 
       - name: Install uv
-        run: python3 -m pip install uv==0.10.6
+        run: python3 -m pip install uv==0.13.6
 
       - name: Sync dependencies
         run: uv sync --group dev --frozen
