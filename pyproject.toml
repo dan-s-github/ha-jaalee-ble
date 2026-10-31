@@ -81,3 +81,6 @@ version_files = ["custom_components/jaalee/manifest.json:version"]
 pre_bump_hooks = ["${UV:-uv} lock"]
 tag_format = "v$version"
 update_changelog_on_bump = true
+# Fold RC entries into the final release so its changelog and release notes
+# list everything shipped since the previous final release.
+changelog_merge_prerelease = true

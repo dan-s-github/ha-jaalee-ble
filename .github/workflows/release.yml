@@ -87,12 +87,24 @@ jobs:
             echo "Release $TAG already exists; skipping creation."
             exit 0
           fi
-          # --generate-notes only lists merged PRs, so lead with the commitizen
-          # changelog section (minus its version heading) to cover direct commits.
-          uv run --group dev cz changelog "$TAG" --dry-run | tail -n +2 > release-notes.md
-          PRERELEASE=()
+          # --generate-notes only lists merged PRs, so lead with this release's
+          # CHANGELOG.md section (minus its heading) to cover direct commits. Use
+          # the file cz bump just wrote rather than `cz changelog --dry-run`, which
+          # ignores changelog_merge_prerelease and would drop the RCs' entries.
+          # Fails the step if the section is missing.
+          awk -v tag="$TAG" '
+            index($0, "## " tag " ") == 1 { found = 1; next }
+            found && /^## / { exit }
+            found { print }
+            END { exit !found }
+          ' CHANGELOG.md > release-notes.md
           if [[ "${{ inputs.increment }}" == *_RC ]]; then
             # Mark RCs as prereleases so HACS only offers them to beta users.
-            PRERELEASE=(--prerelease)
+            EXTRA_ARGS=(--prerelease)
+          else
+            # Compare against the previous final release, not the latest RC, so
+            # the PR list covers everything shipped in this release's RCs.
+            PREV_TAG=$(git describe --tags --abbrev=0 --exclude '*rc*' "$TAG^")
+            EXTRA_ARGS=(--notes-start-tag "$PREV_TAG")
           fi
-          gh release create "$TAG" --notes-file release-notes.md --generate-notes "${PRERELEASE[@]}"
+          gh release create "$TAG" --notes-file release-notes.md --generate-notes "${EXTRA_ARGS[@]}"
