@@ -1,6 +1,6 @@
 """Jaalee BLE session fixtures."""
 
-from collections.abc import Generator
+from collections.abc import Callable, Generator
 from unittest.mock import patch
 
 import homeassistant.components.bluetooth as bluetooth_component
@@ -26,8 +26,9 @@ def mock_ha_scanner_start() -> Generator[None]:
     """
 
     class _NoStartHaScanner(scanner_bleak.HaScanner):
-        def async_setup(self) -> None:
-            return None
+        def async_setup(self) -> Callable[[], None]:
+            # HA >= 2026.11 registers the return value with entry.async_on_unload.
+            return lambda: None
 
         async def async_start(self) -> None:
             return None

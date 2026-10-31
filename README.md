@@ -25,7 +25,7 @@ This integration automatically discovers and monitors Jaalee BLE sensors through
 
 The location of the two holes on the back may help identify the device version.
 
-The JHT sensor broadcasts temperature, humidity, battery level, and Tx Power via iBeacon telemetry with service data UUID `0000f525-0000-1000-8000-00805f9b34fb`.
+The JHT sensor broadcasts temperature, humidity, battery level, and Tx Power via iBeacon telemetry (Apple manufacturer data whose proximity UUID ends in `f525`). It also sends service data UUID `0000f525-0000-1000-8000-00805f9b34fb`, but only in the scan response, which passive scanners never request; discovery therefore works from the iBeacon data alone.
 
 ## How to find your sensor model
 
