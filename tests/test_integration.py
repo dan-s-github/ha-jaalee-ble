@@ -2,13 +2,18 @@
 
 from unittest.mock import AsyncMock, MagicMock, patch
 
+from homeassistant.components.bluetooth.passive_update_processor import (
+    PassiveBluetoothProcessorCoordinator,
+)
+from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant
 from jaalee_ble import SensorModel
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.jaalee import async_setup_entry, async_unload_entry
+from custom_components.jaalee import _create_device_data, async_setup_entry
 from custom_components.jaalee.const import (
     CONF_SENSOR_MODEL,
+    DEFAULT_SENSOR_MODEL,
     DOMAIN,
     SENSOR_MODEL_SHT31,
 )
@@ -111,29 +116,64 @@ async def test_async_setup_entry_passes_sensor_model_to_device_data(
     mock_device_data_class.assert_called_once_with(sensor_model=SensorModel.SHT31)
 
 
-async def test_async_unload_entry_success(hass: HomeAssistant) -> None:
-    """Test successful unload of a config entry."""
+async def test_setup_and_unload_entry(hass: HomeAssistant) -> None:
+    """Test a config entry sets up a coordinator and unloads cleanly."""
     entry = MockConfigEntry(domain=DOMAIN, unique_id="FE:0E:A2:CC:C4:1F")
+    entry.add_to_hass(hass)
 
-    with patch.object(
-        hass.config_entries,
-        "async_unload_platforms",
-        AsyncMock(return_value=True),
-    ):
-        result = await async_unload_entry(hass, entry)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    assert entry.state is ConfigEntryState.LOADED
+    assert isinstance(entry.runtime_data, PassiveBluetoothProcessorCoordinator)
 
-    assert result is True
+    assert await hass.config_entries.async_unload(entry.entry_id)
+    await hass.async_block_till_done()
+    assert entry.state is ConfigEntryState.NOT_LOADED
 
 
-async def test_async_unload_entry_failure(hass: HomeAssistant) -> None:
-    """Test unload when platform unload fails."""
+async def test_unload_entry_failure(hass: HomeAssistant) -> None:
+    """Test the entry stays loaded-failed when platform unload fails."""
     entry = MockConfigEntry(domain=DOMAIN, unique_id="FE:0E:A2:CC:C4:1F")
+    entry.add_to_hass(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
 
     with patch.object(
         hass.config_entries,
         "async_unload_platforms",
         AsyncMock(return_value=False),
     ):
-        result = await async_unload_entry(hass, entry)
+        assert not await hass.config_entries.async_unload(entry.entry_id)
 
-    assert result is False
+    assert entry.state is ConfigEntryState.FAILED_UNLOAD
+
+
+async def test_options_change_reloads_with_new_sensor_model(
+    hass: HomeAssistant,
+) -> None:
+    """Test changing the sensor model reloads the entry with the new model."""
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        unique_id="FE:0E:A2:CC:C4:1F",
+        data={CONF_SENSOR_MODEL: DEFAULT_SENSOR_MODEL},
+    )
+    entry.add_to_hass(hass)
+
+    with patch(
+        "custom_components.jaalee._create_device_data",
+        wraps=_create_device_data,
+    ) as create_device_data:
+        assert await hass.config_entries.async_setup(entry.entry_id)
+        await hass.async_block_till_done()
+        create_device_data.assert_called_once_with(DEFAULT_SENSOR_MODEL)
+
+        result = await hass.config_entries.options.async_init(entry.entry_id)
+        await hass.config_entries.options.async_configure(
+            result["flow_id"],
+            user_input={CONF_SENSOR_MODEL: SENSOR_MODEL_SHT31},
+        )
+        await hass.async_block_till_done()
+
+    assert entry.state is ConfigEntryState.LOADED
+    create_device_data.assert_called_with(SENSOR_MODEL_SHT31)
+    assert create_device_data.call_count == 2

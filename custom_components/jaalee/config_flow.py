@@ -13,7 +13,7 @@ from homeassistant.config_entries import (
     ConfigEntry,
     ConfigFlow,
     ConfigFlowResult,
-    OptionsFlow,
+    OptionsFlowWithReload,
 )
 from homeassistant.const import CONF_ADDRESS
 from jaalee_ble import JaaleeBluetoothDeviceData as DeviceData
@@ -142,7 +142,7 @@ class JaaleeConfigFlow(ConfigFlow, domain=DOMAIN):
         )
 
 
-class JaaleeOptionsFlow(OptionsFlow):
+class JaaleeOptionsFlow(OptionsFlowWithReload):
     """Handle Jaalee options flow."""
 
     async def async_step_init(
