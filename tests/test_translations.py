@@ -2,9 +2,7 @@
 
 from pathlib import Path
 
-TRANSLATIONS_DIR = (
-    Path(__file__).parent.parent / "custom_components" / "jaalee" / "translations"
-)
+COMPONENT_DIR = Path(__file__).parent.parent / "custom_components" / "jaalee"
 
 
 def test_translations_have_no_key_references() -> None:
@@ -12,7 +10,9 @@ def test_translations_have_no_key_references() -> None:
     Test translations contain literal text only.
 
     Home Assistant resolves [%key:...%] references only for core integrations;
-    in a custom integration they are shown to the user verbatim.
+    in a custom integration they are shown to the user verbatim. strings.json
+    is checked too, as translations/en.json is generated from it.
     """
-    for path in TRANSLATIONS_DIR.glob("*.json"):
+    paths = [COMPONENT_DIR / "strings.json", *COMPONENT_DIR.glob("translations/*.json")]
+    for path in paths:
         assert "[%key:" not in path.read_text(), path.name
