@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ha-jaalee-ble"
-version = "1.0.1"
+version = "1.0.2rc1"
 description = "Home Assistant integration for Jaalee BLE devices"
 readme = "README.md"
 license = { text = "MIT" }
@@ -13,7 +13,7 @@ authors = [
 ]
 requires-python = ">=3.14.2"
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 5 - Production/Stable",
     "Environment :: Plugins",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
@@ -74,5 +74,13 @@ ignore_missing_imports = true
 name = "cz_conventional_commits"
 version_provider = "pep621"
 version_files = ["custom_components/jaalee/manifest.json:version"]
+# Keep the project version recorded in uv.lock in sync; cz bump commits with -a,
+# so the regenerated lockfile lands in the bump commit. $UV is the uv binary
+# that launched `uv run`; plain `uv` would resolve to the older copy that
+# homeassistant installs into the venv and rewrite the lockfile format.
+pre_bump_hooks = ["${UV:-uv} lock"]
 tag_format = "v$version"
 update_changelog_on_bump = true
+# Fold RC entries into the final release so its changelog and release notes
+# list everything shipped since the previous final release.
+changelog_merge_prerelease = true

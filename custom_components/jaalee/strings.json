@@ -1,8 +1,8 @@
 {
   "config": {
     "abort": {
-      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
-      "already_in_progress": "[%key:common::config_flow::abort::already_in_progress%]",
+      "already_configured": "Device is already configured",
+      "already_in_progress": "Configuration flow is already in progress",
       "no_devices_found": "No supported Jaalee BLE devices were found nearby.",
       "not_supported": "Device not supported"
     },
@@ -16,7 +16,7 @@
       },
       "user": {
         "data": {
-          "address": "[%key:common::config_flow::data::device%]",
+          "address": "Device",
           "sensor_model": "Sensor model"
         },
         "description": "Select a discovered Jaalee BLE device to set up."

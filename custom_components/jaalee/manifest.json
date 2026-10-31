@@ -9,6 +9,11 @@
     {
       "connectable": false,
       "service_data_uuid": "0000f525-0000-1000-8000-00805f9b34fb"
+    },
+    {
+      "connectable": false,
+      "manufacturer_id": 76,
+      "manufacturer_data_start": [2, 21]
     }
   ],
   "codeowners": [
@@ -24,5 +29,5 @@
   "requirements": [
     "jaalee-ble==1.1.0"
   ],
-  "version": "1.0.1"
+  "version": "1.0.2rc1"
 }

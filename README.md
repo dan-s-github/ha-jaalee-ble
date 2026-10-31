@@ -5,7 +5,7 @@
 
 [![Home Assistant][ha-shield]][ha]
 [![Python Version][python-shield]][python]
-[![License][license-shield]](LICENSE)
+[![License][license-shield]](https://github.com/dan-s-github/ha-jaalee-ble/blob/main/LICENSE)
 
 [![Tests][tests-shield]][tests]
 [![Code Style: Ruff][ruff-shield]][ruff]
@@ -21,17 +21,17 @@ This integration automatically discovers and monitors Jaalee BLE sensors through
 
 | Front | Back | Back (SHT20) |
 |:-----:|:----:|:------------:|
-| ![Jaalee JHT front](docs/jaalee_jht_front.png) | ![Jaalee JHT back](docs/jaalee_jht_back.png) | ![Jaalee JHT back with SHT20](docs/jaalee_jht_back_sht20.png) |
+| ![Jaalee JHT front](https://raw.githubusercontent.com/dan-s-github/ha-jaalee-ble/main/docs/jaalee_jht_front.png) | ![Jaalee JHT back](https://raw.githubusercontent.com/dan-s-github/ha-jaalee-ble/main/docs/jaalee_jht_back.png) | ![Jaalee JHT back with SHT20](https://raw.githubusercontent.com/dan-s-github/ha-jaalee-ble/main/docs/jaalee_jht_back_sht20.png) |
 
 The location of the two holes on the back may help identify the device version.
 
-The JHT sensor broadcasts temperature, humidity, battery level, and Tx Power via iBeacon telemetry with service data UUID `0000f525-0000-1000-8000-00805f9b34fb`.
+The JHT sensor broadcasts temperature, humidity, battery level, and Tx Power via iBeacon telemetry (Apple manufacturer data whose proximity UUID ends in `f525`). It also sends service data UUID `0000f525-0000-1000-8000-00805f9b34fb`, but only in the scan response, which passive scanners never request; discovery therefore works from the iBeacon data alone.
 
 ## How to find your sensor model
 
 | Device (opened) | Sensor |
 |:---------------:|:--------------------------:|
-| ![Jaalee sensor opened](docs/jaalee_open.png) | ![SHT20 sensor model in Home Assistant](docs/jaalee_sht20.png) |
+| ![Jaalee sensor opened](https://raw.githubusercontent.com/dan-s-github/ha-jaalee-ble/main/docs/jaalee_open.png) | ![SHT20 sensor model in Home Assistant](https://raw.githubusercontent.com/dan-s-github/ha-jaalee-ble/main/docs/jaalee_sht20.png) |
 
 Sensor model selection is part of the config flow. Open **Settings** -> **Devices & Services** -> **Jaalee BLE** -> **Configure**, then choose the correct value in **Sensor model**.
 
@@ -132,11 +132,11 @@ If logs mention `passive scanning on Linux requires BlueZ >= 5.56 with --experim
 
 ## Contributing
 
-Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to contribute to this project.
+Contributions are welcome! Please read [CONTRIBUTING.md](https://github.com/dan-s-github/ha-jaalee-ble/blob/main/CONTRIBUTING.md) for details on how to contribute to this project.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/dan-s-github/ha-jaalee-ble/blob/main/LICENSE) file for details.
 
 ## Support
 
