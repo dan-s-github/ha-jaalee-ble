@@ -1,3 +1,11 @@
+## v1.0.2rc1 (2026-10-31)
+
+### Fix
+
+- use literal text in strings.json too
+- reload the entry when the sensor model option changes
+- reject non-Jaalee iBeacons before claiming the unique_id
+
 ## v1.0.2rc0 (2026-10-31)
 
 ### Fix
